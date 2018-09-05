@@ -9,7 +9,7 @@
 This is a Computer Vision classes prepared for the 2nd-year M.D. students.
 Course includes topics covering basic areas of computer vision.
 It takes 16 seminars-discussion lessons and 8 practical lessons.
-Most practical lessons will be based on using of the OpenCV v3.x library.
+Most practical lessons will be based on using of the OpenCV v3.2 library.
 All materials and tasks will be hosted in this repository and available for all students.
 All program code is written using c++14.
 
@@ -25,6 +25,8 @@ All program code is written using c++14.
 Course consist of
 * 26 seminars/practical lessons.
 * 7 individual programming tasks.
+
+[2018 plan](https://docs.google.com/spreadsheets/d/e/2PACX-1vQED4IwdOIDpr_h6e-k1BKvmH_Xq2l4FGPDfiJa8EPCVm5a7nWc1S1EMpOC5FbutaKBmVkuWzSLPiC8/pubhtml?gid=1805943559&single=true)
 
 
 ## Repository Overview
@@ -95,7 +97,7 @@ build/ $ ./demo/cvlib_demo
 
 Prerequesties:
 1. Install latest CMake 3.9.2 x64
-2. Download and unpack binaries of OpenCV 3.3 vc14.
+2. Download and unpack binaries of OpenCV 3.2 vc14.
 3. Add system environment variables, example:
     ```
     OPENCV_DIR="C:\Users\roman\Downloads\opencv\build"
