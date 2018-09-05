@@ -112,9 +112,17 @@ Stay in root folder of the repository:
 
 ```sh
 $ mkdir build && cd build
-$ cmake .. -G "Visual Studio 14 2015 Win64"
+build/ $ cmake .. -G "Visual Studio 14 2015 Win64"
+build/ $ cmake --build . --config Release
 ```
-Open `CV18.sln` in Visual Studio and "Build Solution".
+
+Note: checkstyle is disabled in WIN32 environment.
+
+Run Demo:
+
+```sh
+build/ $ ./demo/Release/cvlib_demo.exe
+```
 
 ## Contacts
 
