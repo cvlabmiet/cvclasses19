@@ -1,7 +1,7 @@
 /* Computer Vision Functions.
  * @file
- * @date 2018-09-05
- * @author Anonymous
+ * @date 2018-09-10
+ * @author Max Kimlyk
  */
 
 #ifndef __CVLIB_HPP__
@@ -14,8 +14,9 @@ namespace cvlib
 /// \brief Split and merge algorithm for image segmentation
 /// \param image, in - input image
 /// \param stddev, in - threshold to treat regions as homogeneous
+/// \param min_chunk_size, in - chunk of this size will not be splited into smaller chunks
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev);
+cv::Mat split_and_merge(const cv::Mat& image, double stddev, int min_chunk_size = 10);
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
