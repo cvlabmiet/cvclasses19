@@ -1,7 +1,7 @@
 /* Main file of Catch.
  * @file
- * @author Anonymous
- * @date 2018-09-05
+ * @author Max Kimlyk
+ * @date 2018-09-10
  */
 
 #define CATCH_CONFIG_MAIN
