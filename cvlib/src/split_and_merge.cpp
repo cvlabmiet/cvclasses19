@@ -28,7 +28,7 @@ void split_image(cv::Mat image, double stddev)
     split_image(image(cv::Range(height / 2, height), cv::Range(width / 2, width)), stddev);
     split_image(image(cv::Range(height / 2, height), cv::Range(0, width / 2)), stddev);
 }
-}
+} // namespace
 
 namespace cvlib
 {
