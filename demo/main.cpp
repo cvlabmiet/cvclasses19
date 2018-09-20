@@ -18,7 +18,6 @@ int main(int argc, char* argv[])
     cv::Mat frame_gray1;
     cv::Mat frame_gray2;
 
-
     const auto origin_wnd = "origin";
     const auto split_wnd = "split";
     const auto merge_wnd = "merge";
@@ -27,7 +26,7 @@ int main(int argc, char* argv[])
     cv::namedWindow(split_wnd, 1);
     cv::namedWindow(merge_wnd, 1);
 
-
+    int a = 0;
     // \todo choose reasonable max value
     cv::createTrackbar("stdev", split_wnd, &stddev, 255);
 
@@ -42,7 +41,7 @@ int main(int argc, char* argv[])
 
         //cv::split(frame, rgb);
 
-        
+
         //cvlib::test_merge(rgb[0], stddev);
         //cvlib::test_merge(rgb[1], stddev);
         //cvlib::test_merge(rgb[2], stddev);
@@ -51,7 +50,7 @@ int main(int argc, char* argv[])
         //cvlib::split_and_merge(rgb[2], stddev);
 
         //cv:merge(rgb, frame_gray);
-        
+
         cv::imshow(origin_wnd, frame);
         cv::imshow(split_wnd, cvlib::cvlib_split(frame_gray1, stddev));
         cv::imshow(merge_wnd, cvlib::cvlib_merge(frame_gray2, stddev));
