@@ -5,11 +5,10 @@
  */
 
 #include <cvlib.hpp>
-#include <opencv2/opencv.hpp>
 #include <iostream>
+#include <opencv2/opencv.hpp>
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     cv::VideoCapture cap(0);
     if (!cap.isOpened())
         return -1;
@@ -34,22 +33,21 @@ int main(int argc, char* argv[])
     {
         cap >> frame;
 
-        std::vector <cv::Mat> rgb;
+        std::vector<cv::Mat> rgb;
         cv::cvtColor(frame, frame_gray1, cv::COLOR_BGR2GRAY);
         frame_gray2 = frame_gray1.clone();
-        //cv::cvtColor(frame, frame_gray2, cv::COLOR_BGR2GRAY);
+        // cv::cvtColor(frame, frame_gray2, cv::COLOR_BGR2GRAY);
 
-        //cv::split(frame, rgb);
+        // cv::split(frame, rgb);
 
+        // cvlib::test_merge(rgb[0], stddev);
+        // cvlib::test_merge(rgb[1], stddev);
+        // cvlib::test_merge(rgb[2], stddev);
+        // cvlib::split_and_merge(rgb[0], stddev);
+        // cvlib::split_and_merge(rgb[1], stddev);
+        // cvlib::split_and_merge(rgb[2], stddev);
 
-        //cvlib::test_merge(rgb[0], stddev);
-        //cvlib::test_merge(rgb[1], stddev);
-        //cvlib::test_merge(rgb[2], stddev);
-        //cvlib::split_and_merge(rgb[0], stddev);
-        //cvlib::split_and_merge(rgb[1], stddev);
-        //cvlib::split_and_merge(rgb[2], stddev);
-
-        //cv:merge(rgb, frame_gray);
+        // cv:merge(rgb, frame_gray);
 
         cv::imshow(origin_wnd, frame);
         cv::imshow(split_wnd, cvlib::cvlib_split(frame_gray1, stddev));
