@@ -4,34 +4,34 @@
  * @author Max Kimlyk
  */
 
-#include <cvlib.hpp>
 #include <opencv2/opencv.hpp>
+
+int demo_split_and_merge(int argc, char* argv[]); // lab 1
+int demo_select_texture(int argc, char* argv[]); // lab 2
 
 int main(int argc, char* argv[])
 {
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened())
-        return -1;
+    cv::namedWindow("main");
+    cv::Mat help = cv::Mat::zeros(300, 500, CV_8UC3);
+    cv::putText(help, "Press ESC to exit", cv::Point(30, 30), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::putText(help, "Press 1 for Lab 1 Demo (split and merge)", cv::Point(30, 50), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::putText(help, "Press 2 for Lab 2 Demo (texture segmentation)", cv::Point(30, 70), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::imshow("main", help);
 
-    cv::Mat frame;
-    cv::Mat frame_gray;
-
-    const auto origin_wnd = "origin";
-    const auto demo_wnd = "demo";
-
-    int stddev = 30;
-    int min_chunk_size = 10;
-    cv::namedWindow(demo_wnd, 1);
-    cv::createTrackbar("stdev", demo_wnd, &stddev, 255);
-    cv::createTrackbar("min chunk size", demo_wnd, &min_chunk_size, 20);
-
-    while (cv::waitKey(30) != 27) // ESC
+    while (true)
     {
-        cap >> frame;
-        cv::imshow(origin_wnd, frame);
-        min_chunk_size = min_chunk_size == 0 ? 1 : min_chunk_size; // avoiding division by zero
-        cv::imshow(demo_wnd, cvlib::split_and_merge(frame, stddev, min_chunk_size));
-    }
+        int key = cv::waitKey(0);
 
-    return 0;
+        switch (key)
+        {
+            case '1':
+                demo_split_and_merge(argc, argv);
+                break;
+            case '2':
+                demo_select_texture(argc, argv);
+                break;
+            case 27: // ESC
+                return 0;
+        }
+    }
 }
