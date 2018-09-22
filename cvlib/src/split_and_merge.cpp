@@ -6,13 +6,16 @@
 
 #include "cvlib.hpp"
 
-namespace {
-void split_image(cv::Mat image, double stddev) {
+namespace
+{
+void split_image(cv::Mat image, double stddev)
+{
     cv::Mat mean;
     cv::Mat dev;
     cv::meanStdDev(image, mean, dev);
 
-    if (dev.at<double>(0) <= stddev) {
+    if (dev.at<double>(0) <= stddev)
+    {
         image.setTo(mean);
         return;
     }
@@ -21,23 +24,23 @@ void split_image(cv::Mat image, double stddev) {
     const auto height = image.rows;
 
     split_image(image(cv::Range(0, height / 2), cv::Range(0, width / 2)), stddev);
-    split_image(image(cv::Range(0, height / 2), cv::Range(width / 2, width)),
-                stddev);
-    split_image(image(cv::Range(height / 2, height), cv::Range(width / 2, width)),
-                stddev);
-    split_image(image(cv::Range(height / 2, height), cv::Range(0, width / 2)),
-                stddev);
+    split_image(image(cv::Range(0, height / 2), cv::Range(width / 2, width)), stddev);
+    split_image(image(cv::Range(height / 2, height), cv::Range(width / 2, width)), stddev);
+    split_image(image(cv::Range(height / 2, height), cv::Range(0, width / 2)), stddev);
 }
 } // namespace
 
-namespace {
+namespace
+{
 const unsigned diffMean = 10;
-void merge_image(cv::Mat image, double stddev) {
+void merge_image(cv::Mat image, double stddev)
+{
     cv::Mat mean;
     cv::Mat dev;
     cv::meanStdDev(image, mean, dev);
 
-    if (dev.at<double>(0) <= stddev) {
+    if (dev.at<double>(0) <= stddev)
+    {
         image.setTo(mean);
         return;
     }
@@ -60,8 +63,7 @@ void merge_image(cv::Mat image, double stddev) {
 
     cv::Mat R_2 = image(cv::Range(height / 2, height), cv::Range(0, width / 2));
 
-    cv::Mat R_3 =
-        image(cv::Range(height / 2, height), cv::Range(width / 2, width));
+    cv::Mat R_3 = image(cv::Range(height / 2, height), cv::Range(width / 2, width));
 
     cv::meanStdDev(R_0, Rmean_0, Rdev_0);
     cv::meanStdDev(R_1, Rmean_1, Rdev_1);
@@ -72,32 +74,30 @@ void merge_image(cv::Mat image, double stddev) {
     int flag_1 = 0;
     int flag_2 = 0;
     int flag_3 = 0;
-    if (Rdev_0.at<double>(0) <= stddev && Rdev_1.at<double>(0) <= stddev &&
-            abs(Rmean_0.at<double>(0) - Rmean_1.at<double>(0)) <= diffMean) {
+    if (Rdev_0.at<double>(0) <= stddev && Rdev_1.at<double>(0) <= stddev && abs(Rmean_0.at<double>(0) - Rmean_1.at<double>(0)) <= diffMean)
+    {
         flag_0 = 1;
         R_0.setTo((Rmean_0 + Rmean_1) / 2);
         R_1.setTo((Rmean_0 + Rmean_1) / 2);
     }
 
-    if (Rdev_3.at<double>(0) <= stddev && Rdev_1.at<double>(0) <= stddev &&
-            !flag_0 &&
-            abs(Rmean_3.at<double>(0) - Rmean_1.at<double>(0)) <= diffMean) {
+    if (Rdev_3.at<double>(0) <= stddev && Rdev_1.at<double>(0) <= stddev && !flag_0 && abs(Rmean_3.at<double>(0) - Rmean_1.at<double>(0)) <= diffMean)
+    {
         flag_2 = 1;
         R_3.setTo((Rmean_3 + Rmean_1) / 2);
         R_1.setTo((Rmean_3 + Rmean_1) / 2);
     }
 
-    if (Rdev_3.at<double>(0) <= stddev && Rdev_2.at<double>(0) <= stddev &&
-            !flag_2 &&
-            abs(Rmean_3.at<double>(0) - Rmean_2.at<double>(0)) <= diffMean) {
+    if (Rdev_3.at<double>(0) <= stddev && Rdev_2.at<double>(0) <= stddev && !flag_2 && abs(Rmean_3.at<double>(0) - Rmean_2.at<double>(0)) <= diffMean)
+    {
         flag_3 = 1;
         R_2.setTo((Rmean_3 + Rmean_2) / 2);
         R_3.setTo((Rmean_3 + Rmean_2) / 2);
     }
 
-    if (Rdev_0.at<double>(0) <= stddev && Rdev_2.at<double>(0) <= stddev &&
-            !flag_0 && !flag_3 &&
-            abs(Rmean_0.at<double>(0) - Rmean_2.at<double>(0)) <= diffMean) {
+    if (Rdev_0.at<double>(0) <= stddev && Rdev_2.at<double>(0) <= stddev && !flag_0 && !flag_3 &&
+        abs(Rmean_0.at<double>(0) - Rmean_2.at<double>(0)) <= diffMean)
+    {
         flag_1 = 1;
         R_0.setTo((Rmean_0 + Rmean_2) / 2);
         R_2.setTo((Rmean_0 + Rmean_2) / 2);
@@ -117,8 +117,10 @@ void merge_image(cv::Mat image, double stddev) {
 }
 } // namespace
 
-namespace cvlib {
-cv::Mat split_and_merge(const cv::Mat &image, double stddev) {
+namespace cvlib
+{
+cv::Mat split_and_merge(const cv::Mat& image, double stddev)
+{
     // split part
     cv::Mat res = image;
     split_image(res, stddev);
@@ -129,16 +131,20 @@ cv::Mat split_and_merge(const cv::Mat &image, double stddev) {
 }
 } // namespace cvlib
 
-namespace cvlib {
-cv::Mat cvlib_split(const cv::Mat &image, double stddev) {
+namespace cvlib
+{
+cv::Mat cvlib_split(const cv::Mat& image, double stddev)
+{
     cv::Mat res = image;
     split_image(res, stddev);
     return res;
 }
 } // namespace cvlib
 
-namespace cvlib {
-cv::Mat cvlib_merge(const cv::Mat &image, double stddev) {
+namespace cvlib
+{
+cv::Mat cvlib_merge(const cv::Mat& image, double stddev)
+{
     cv::Mat res = image;
     merge_image(res, stddev);
     return res;

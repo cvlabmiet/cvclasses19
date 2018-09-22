@@ -29,8 +29,7 @@ cv::Mat cvlib_split(const cv::Mat& image, double stddev);
 /// \return segmented image
 cv::Mat cvlib_merge(const cv::Mat& image, double stddev);
 
-
-//cv::Mat test_merge(const cv::Mat& image, double stddev);
+// cv::Mat test_merge(const cv::Mat& image, double stddev);
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
