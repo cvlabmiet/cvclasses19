@@ -4,44 +4,72 @@
  * @author Anonymous
  */
 
+
 #include <cvlib.hpp>
 #include <iostream>
+
 #include <opencv2/opencv.hpp>
+
+int demo_split_and_merge(int argc, char* argv[]); // lab 1
+int demo_select_texture(int argc, char* argv[]); // lab 2
 
 int main(int argc, char* argv[])
 {
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened())
-        return -1;
 
-    cv::Mat frame;
-    cv::Mat frame_gray1;
-    cv::Mat frame_gray2;
+    // cv::VideoCapture cap(0);
+    // if (!cap.isOpened())
+        // return -1;
 
-    const auto origin_wnd = "origin";
-    const auto split_wnd = "split";
-    const auto merge_wnd = "merge";
+    // cv::Mat frame;
+    // cv::Mat frame_gray1;
+    // cv::Mat frame_gray2;
 
-    int stddev = 50;
-    cv::namedWindow(split_wnd, 1);
-    cv::namedWindow(merge_wnd, 1);
+    // const auto origin_wnd = "origin";
+    // const auto split_wnd = "split";
+    // const auto merge_wnd = "merge";
 
-    int a = 0;
+    // int stddev = 50;
+    // cv::namedWindow(split_wnd, 1);
+    // cv::namedWindow(merge_wnd, 1);
 
-    cv::createTrackbar("stdev", split_wnd, &stddev, 255);
+    // int a = 0;
 
-    while (cv::waitKey(30) != 27) // ESC
+    // cv::createTrackbar("stdev", split_wnd, &stddev, 255);
+
+    // while (cv::waitKey(30) != 27) // ESC
+    // {
+        // cap >> frame;
+
+        // std::vector<cv::Mat> rgb;
+        // cv::cvtColor(frame, frame_gray1, cv::COLOR_BGR2GRAY);
+        // frame_gray2 = frame_gray1.clone();
+
+        // cv::imshow(origin_wnd, frame);
+        // cv::imshow(split_wnd, cvlib::cvlib_split(frame_gray1, stddev));
+        // cv::imshow(merge_wnd, cvlib::cvlib_merge(frame_gray2, stddev));
+
+    cv::namedWindow("main");
+    cv::Mat help = cv::Mat::zeros(300, 500, CV_8UC3);
+    cv::putText(help, "Press ESC to exit", cv::Point(30, 30), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::putText(help, "Press 1 for Lab 1 Demo (split and merge)", cv::Point(30, 50), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::putText(help, "Press 2 for Lab 2 Demo (texture segmentation)", cv::Point(30, 70), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::imshow("main", help);
+
+    while (true)
     {
-        cap >> frame;
+        int key = cv::waitKey(0);
 
-        std::vector<cv::Mat> rgb;
-        cv::cvtColor(frame, frame_gray1, cv::COLOR_BGR2GRAY);
-        frame_gray2 = frame_gray1.clone();
-
-        cv::imshow(origin_wnd, frame);
-        cv::imshow(split_wnd, cvlib::cvlib_split(frame_gray1, stddev));
-        cv::imshow(merge_wnd, cvlib::cvlib_merge(frame_gray2, stddev));
+        switch (key)
+        {
+            case '1':
+                demo_split_and_merge(argc, argv);
+                break;
+            case '2':
+                demo_select_texture(argc, argv);
+                break;
+            case 27: // ESC
+                return 0;
+        }
+// >>>>>>> 6488263b67d4ac94219b496d1a721549ed5f62b4
     }
-
-    return 0;
 }

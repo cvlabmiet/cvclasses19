@@ -15,7 +15,7 @@ endif (UNIX)
 
 function(check_files_style target)
     if (WIN32)
-        return()
+       return()
     endif (WIN32)
 
     get_target_property(SRCS ${target} SOURCES)

@@ -17,19 +17,28 @@ namespace cvlib
 /// \return segmented image
 cv::Mat split_and_merge(const cv::Mat& image, double stddev);
 
-/// \brief Split algorithm for image segmentation
-/// \param image, in - input image
-/// \param stddev, in - threshold to treat regions as homogeneous
-/// \return segmented image
-cv::Mat cvlib_split(const cv::Mat& image, double stddev);
+// <<<<<<< HEAD
+// /// \brief Split algorithm for image segmentation
+// /// \param image, in - input image
+// /// \param stddev, in - threshold to treat regions as homogeneous
+// /// \return segmented image
+// cv::Mat cvlib_split(const cv::Mat& image, double stddev);
 
-/// \brief Merge algorithm for image segmentation
-/// \param image, in - input image
-/// \param stddev, in - threshold to treat regions as homogeneous
-/// \return segmented image
-cv::Mat cvlib_merge(const cv::Mat& image, double stddev);
+// /// \brief Merge algorithm for image segmentation
+// /// \param image, in - input image
+// /// \param stddev, in - threshold to treat regions as homogeneous
+// /// \return segmented image
+// cv::Mat cvlib_merge(const cv::Mat& image, double stddev);
 
-// cv::Mat test_merge(const cv::Mat& image, double stddev);
+// // cv::Mat test_merge(const cv::Mat& image, double stddev);
+// =======
+/// \brief Segment texuture on passed image according to sample in ROI
+/// \param image, in - input image
+/// \param roi, in - region with sample texture on passed image
+/// \param eps, in - threshold parameter for texture's descriptor distance
+/// \return binary mask with selected texture
+cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps);
+// >>>>>>> 6488263b67d4ac94219b496d1a721549ed5f62b4
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
