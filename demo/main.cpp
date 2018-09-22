@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
     cv::namedWindow(merge_wnd, 1);
 
     int a = 0;
-    // \todo choose reasonable max value
+
     cv::createTrackbar("stdev", split_wnd, &stddev, 255);
 
     while (cv::waitKey(30) != 27) // ESC
