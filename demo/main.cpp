@@ -1,14 +1,14 @@
+
 /* Demo application for Computer Vision Library.
- * @file
- * @date 2018-09-05
- * @author Anonymous
- */
+* @file
+* @date 2018-09-05
+* @author Anonymous
+*/
 
 #include <cvlib.hpp>
 #include <opencv2/opencv.hpp>
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char *argv[]) {
     cv::VideoCapture cap(0);
     if (!cap.isOpened())
         return -1;
@@ -32,8 +32,8 @@ int main(int argc, char* argv[])
     {
         cap >> frame;
 
-        std::vector <cv::Mat> rgb4split;
-        std::vector <cv::Mat> rgb4split_and_merge;
+        std::vector<cv::Mat> rgb4split;
+        std::vector<cv::Mat> rgb4split_and_merge;
         cv::split(frame, rgb4split);
         cv::split(frame, rgb4split_and_merge);
 
@@ -48,12 +48,21 @@ int main(int argc, char* argv[])
         cv::merge(rgb4split, frame4split);
         cv::merge(rgb4split_and_merge, frame4split_and_merge);
 
-        //cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
-        //cv::cvtColor(frame, frame_gray4split, cv::COLOR_BGR2GRAY);
+        // cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+        // cv::cvtColor(frame, frame_gray4split, cv::COLOR_BGR2GRAY);
         cv::imshow(origin_wnd, frame);
-        cv::imshow(demo_wnd, frame4split_and_merge);//cvlib::split_and_merge(frame_gray, stddev, diffmean));
-        cv::imshow(split_wnd, frame4split);//cvlib::split_only(frame_gray4split, stddev));
+        cv::imshow(demo_wnd,
+            frame4split_and_merge); // cvlib::split_and_merge(frame_gray,
+                                    // stddev, diffmean));
+        cv::imshow(split_wnd,
+            frame4split); // cvlib::split_only(frame_gray4split, stddev));
     }
 
     return 0;
 }
+
+
+Format!Style:
+C++ online code formatter © 2014 by KrzaQ
+
+Powered by vibe.d, the D language and clang - format
