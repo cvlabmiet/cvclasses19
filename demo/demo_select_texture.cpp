@@ -10,26 +10,33 @@
 
 namespace
 {
-struct user_data
-{
-    std::string wnd;
-    cv::Point tl;
-    cv::Point br;
-    cv::Mat image;
-};
+    bool gRoiChanged = false;
+    bool gMousePressed = false;
 
-void mouse(int event, int x, int y, int flags, void* param)
-{
-    user_data& data = *reinterpret_cast<user_data*>(param);
-    if (event == CV_EVENT_LBUTTONDOWN)
+    struct user_data
     {
-        data.tl = {x, y};
-    }
-    else if (event == CV_EVENT_RBUTTONDOWN)
+        std::string wnd;
+        cv::Point tl;
+        cv::Point br;
+        cv::Mat image;
+    };
+
+    void mouse(int event, int x, int y, int flags, void* param)
     {
-        data.br = {x, y};
+        user_data& data = *reinterpret_cast<user_data*>(param);
+        if (event == CV_EVENT_LBUTTONDOWN)
+        {
+            gMousePressed = true;
+            data.tl = {x, y};
+        }
+        //else if (event == CV_EVENT_RBUTTONDOWN)
+        else if (event == CV_EVENT_LBUTTONUP)
+        {
+            gMousePressed = false;
+            gRoiChanged = true;
+            data.br = {x, y};
+        }
     }
-}
 } // namespace
 
 int demo_select_texture(int argc, char* argv[])
@@ -60,11 +67,16 @@ int demo_select_texture(int argc, char* argv[])
         const cv::Rect roi = {data.tl, data.br};
         if (roi.area())
         {
-            const auto mask = cvlib::select_texture(frame_gray, roi, eps);
-            const auto segmented = mask.clone();
-            frame_gray.copyTo(segmented, mask);
-            cv::imshow(demo_wnd, segmented);
+            if (!gMousePressed)
+            {
+                const auto mask = cvlib::select_texture(frame_gray, roi, eps, gRoiChanged);
+                const auto segmented = mask.clone();
+                frame_gray.copyTo(segmented, mask);
+                cv::imshow(demo_wnd, segmented);
+            }
             cv::rectangle(data.image, data.tl, data.br, cv::Scalar(0, 0, 255));
+
+            if (gRoiChanged) gRoiChanged = false;
         }
         cv::imshow(data.wnd, data.image);
     }
