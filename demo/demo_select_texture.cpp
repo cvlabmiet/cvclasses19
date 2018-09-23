@@ -52,10 +52,12 @@ int demo_select_texture(int argc, char* argv[])
     cv::setMouseCallback(data.wnd, mouse, &data);
 
     cv::Mat frame_gray;
-    while (cv::waitKey(30) != 27) // ESC
+    
+
+	while (cv::waitKey(30) != 27) // ESC
     {
         cap >> data.image;
-
+        //data.image = cv::imread("D:/ClangFormat/2.jpg", 1);
         cv::cvtColor(data.image, frame_gray, cv::COLOR_BGR2GRAY);
         const cv::Rect roi = {data.tl, data.br};
         if (roi.area())
