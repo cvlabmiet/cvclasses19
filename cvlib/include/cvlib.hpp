@@ -15,7 +15,7 @@ namespace cvlib
 /// \param image, in - input image
 /// \param stddev, in - threshold to treat regions as homogeneous
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev);
+cv::Mat split_and_merge(const cv::Mat& image, double stddev, int minSquare, double meanDeviation, double scaleFactor);
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__

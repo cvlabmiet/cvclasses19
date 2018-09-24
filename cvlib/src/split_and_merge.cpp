@@ -1,222 +1,250 @@
 /* Split and merge segmentation algorithm implementation.
  * @file
- * @date 2018-09-05
- * @author Anonymous
+ * @date 2018-09-17
+ * @author Vladislav Dimakov
  */
 
 #include "cvlib.hpp"
 #include <vector>
-#include <list>
 
 namespace
 {
 	struct Region
 	{
-		unsigned int label;
 		bool isActive;
 		std::vector<cv::Rect> areas;
-		std::list<unsigned int> neighbors;
+		std::vector<unsigned int> neighbors;
 		unsigned int pixelNum;
-		unsigned int sum = 0;
-		unsigned int sumQuad = 0;
-		double stddev = 0.0;
+		unsigned int sum;
+		unsigned int quadSum;
 	};
 
 	class SplitAndMerge
 	{
 	public:
-		SplitAndMerge()
-		{
-			
-		}
-
-		void Process(cv::Mat image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev)
+		void Process(cv::Mat image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev, int minSquare, double meanDeviation, double scaleFactor)
 		{
 			m_regions.clear();
-			labelNum = 0;
 
-			m_labels = cv::Mat(image.rows, image.cols, CV_16U, cv::Scalar(0));
-			
-			image.copyTo(splitImage); // DELETE
 			image.copyTo(m_image);
-			image.copyTo(m_splitImage);
+			m_splitImage = cv::Mat(image.rows, image.cols, image.type(), cv::Scalar(0));
+			m_mergeImage = cv::Mat(image.rows, image.cols, image.type(), cv::Scalar(0));
+			m_labels = cv::Mat(image.rows, image.cols, CV_32SC1, cv::Scalar(-1));			
 			
-			cv::Rect area;
-			area.x = 0; 
-			area.y = 0;
-			area.width = image.cols;
-			area.height = image.rows;
+			if (!m_image.empty())
+			{
+				cv::Rect area(0, 0, image.cols, image.rows);
+				split_image(area, stddev, minSquare);
 
-			split_image(splitImage, area, stddev);
+				find_neighbors();
+				merge_process(stddev, meanDeviation, scaleFactor);
+				make_merge_image();
+			}
+
 			m_splitImage.copyTo(splitImage);
-
-			//image.copyTo(mergeImage);
-			//make_labels_image();
-			//find_neighbors();
-			//merge_process(stddev);
-			//make_merge_image(mergeImage);
+			m_mergeImage.copyTo(mergeImage);
 		}
 	private:
-		double cals_stddev(unsigned int sum, unsigned int sumQuad, unsigned int pixelNum)
+		void split_image(cv::Rect area, double stddev, int minSquare)
 		{
-			double M = sum / double(pixelNum);
-			double MQuad = sumQuad / double(pixelNum);
-			return sqrt(MQuad - M * M);
-		}
-
-		void split_image(cv::Mat &image, cv::Rect area, double stddev)
-		{
-			unsigned int pixelNum = image.rows * image.cols;
-			unsigned int sum = 0;
-			unsigned int sumQuad = 0;
+			unsigned int curPixelNum = area.width * area.height;
+			unsigned int curSum = 0;
+			unsigned int curQuadSum = 0;
 
 			for (size_t i = area.y; i < area.y + area.height; i++)
 			{
 				for (size_t j = area.x; j < area.x + area.width; j++)
 				{
-					sum += m_image.at<unsigned char>(i, j);
-					sumQuad += m_image.at<unsigned char>(i, j) * m_image.at<unsigned char>(i, j);
+					curSum += m_image.at<unsigned char>(i, j);
+					curQuadSum += m_image.at<unsigned char>(i, j) * m_image.at<unsigned char>(i, j);
 				}
 			}
 
-			double curStddev = cals_stddev(sum, sumQuad, pixelNum);
+			double curMean = curSum / double(curPixelNum);
+			double curQuadMean = curQuadSum / double(curPixelNum);
+			double curStddev = sqrt(curQuadMean - curMean * curMean);
 
-			if (curStddev <= stddev || image.rows == 1 || image.cols == 1)
+			if (curStddev <= stddev || area.width == 1 || area.height == 1 || area.width * area.height <= minSquare)
 			{
-				cv::rectangle(m_splitImage, area, cv::Scalar(sum / pixelNum), -1);
-
-				//Region region;
-				//region.label = ++labelNum;
-				//region.isActive = true;
-				// TODO
-				//m_regions.push_back(region);
+				cv::rectangle(m_splitImage, area, cv::Scalar(curSum / double (curPixelNum) + 0.5), -1);
+				cv::rectangle(m_labels, area, cv::Scalar(m_regions.size()), 1);
+				
+				Region region;
+				region.isActive = true;
+				region.areas.push_back(area);
+				region.pixelNum = curPixelNum;
+				region.sum = curSum;
+				region.quadSum = curQuadSum;
+				
+				m_regions.push_back(region);	
 				
 				return;
 			}
 
-			area.width /= 2;
-			area.height /= 2;
-			const auto width = image.cols;
-			const auto height = image.rows;
+			int x = area.x;
+			int y = area.y;
+			double halfWidth = area.width / 2.0;
+			double halfHeight = area.height / 2.0;
 
-			cv::Rect area1 = area;
-			split_image(image(cv::Range(0, height / 2), cv::Range(0, width / 2)), area1, stddev);
+			cv::Rect area1(x, y, halfWidth, halfHeight);
+			split_image(area1, stddev, minSquare);
 
-			cv::Rect area2 = area;
-			area2.x += area.width;
-			split_image(image(cv::Range(0, height / 2), cv::Range(width / 2, width)), area2, stddev);
+			cv::Rect area2(x + halfWidth, y, halfWidth + 0.5, halfHeight);
+			split_image(area2, stddev, minSquare);
 
-			cv::Rect area3 = area;
-			area3.y += area.height;
-			area3.x += area.width;
-			split_image(image(cv::Range(height / 2, height), cv::Range(width / 2, width)), area3, stddev);
+			cv::Rect area3(x, y + halfHeight, halfWidth, halfHeight + 0.5);
+			split_image(area3, stddev, minSquare);
 
-			cv::Rect area4 = area;
-			area4.y += area.height;
-			split_image(image(cv::Range(height / 2, height), cv::Range(0, width / 2)), area4, stddev);
-		}
-
-		void make_labels_image()
-		{
-			for (auto &region : m_regions)
-			{
-				cv::rectangle(m_labels, region.areas[0], cv::Scalar(region.label));
-			}
+			cv::Rect area4(x + halfWidth, y + halfHeight, halfWidth + 0.5, halfHeight + 0.5);
+			split_image(area4, stddev, minSquare);
 		}
 
 		void find_neighbors()
 		{
-			for (auto &region : m_regions)
+			int curValue, leftValue, rightValue, botValue, topValue;
+
+			for (size_t i = 0; i < m_labels.rows; i++)
 			{
-				auto area = region.areas[0];
-				auto neighbors = region.neighbors;
-
-				if (area.x - 1>= 0)
+				for (size_t j = 0; j < m_labels.cols; j++)
 				{
-					neighbors.push_back(m_labels.at<unsigned short>(area.x - 1, area.y));
-				}
-				if (area.y - 1 >= 0)
-				{
-					neighbors.push_back(m_labels.at<unsigned short>(area.x, area.y - 1));
-				}
-				if (area.x + area.width + 1 < m_labels.cols)
-				{
-					neighbors.push_back(m_labels.at<unsigned short>(area.x + area.width + 1, area.y));
-				}
-				if (area.y + area.height + 1 < m_labels.rows)
-				{
-					neighbors.push_back(m_labels.at<unsigned short>(area.x, area.y + area.height + 1));
-				}
-			}
-		}
-
-		bool merge_regions_with_neighbors(Region &region, double stddev)
-		{
-			bool isMerged = false;
-			for (auto &neighborLabel : region.neighbors)
-			{
-				if (!m_regions[neighborLabel].isActive || neighborLabel == region.label)
-					continue;
-
-				unsigned int sum = region.sum + m_regions[neighborLabel].sum;
-				unsigned int sumQuad = region.sumQuad + m_regions[neighborLabel].sumQuad;
-				unsigned int pixelNum = region.pixelNum + m_regions[neighborLabel].pixelNum;
-				double mergedStddev = cals_stddev(sum, sumQuad, pixelNum);
-
-				if (mergedStddev > stddev)
-				{
-					m_regions[neighborLabel].isActive = false;
-
-					// Удалить m_regions[neighborLabel].label из region.neighbors
-
-					for (auto &newNeighbor : m_regions[neighborLabel].neighbors)
+					curValue = m_labels.at<int>(i, j);
+					if (curValue == -1)
+						continue;
+					
+					if (j > 0)
 					{
-						if (newNeighbor != region.label)
-							region.neighbors.push_back(newNeighbor);
-					}		
+						leftValue = m_labels.at<int>(i, j - 1);
 
-					for (auto &newArea : m_regions[neighborLabel].areas)
-						region.areas.push_back(newArea);
-
-					region.sum = sum;
-					region.sumQuad = sumQuad;
-					region.pixelNum = pixelNum;
-
-					isMerged = true;
-				}
-			}
-
-			return isMerged;
-		}
-
-		void merge_process(double stddev)
-		{
-			bool needToStop = false;
-			while (!needToStop)
-			{
-				needToStop = true;
-				for (auto &region : m_regions)
-				{
-					if (region.isActive)
-					{
-						if (merge_regions_with_neighbors(region, stddev))
+						if (leftValue != -1 && curValue != leftValue)
 						{
-							needToStop = false;
-							continue;
+							if (std::find(m_regions[curValue].neighbors.begin(), m_regions[curValue].neighbors.end(),
+								leftValue) == m_regions[curValue].neighbors.end())
+							{
+								m_regions[curValue].neighbors.push_back(leftValue);
+							}
+						}
+					}
+
+					if (j + 1 < m_labels.cols)
+					{
+						rightValue = m_labels.at<int>(i, j + 1);
+
+						if (rightValue != -1 && curValue != rightValue)
+						{
+							if (std::find(m_regions[curValue].neighbors.begin(), m_regions[curValue].neighbors.end(),
+								rightValue) == m_regions[curValue].neighbors.end())
+							{
+								m_regions[curValue].neighbors.push_back(rightValue);
+							}
+						}
+					}
+
+					if (i > 0)
+					{
+						botValue = m_labels.at<int>(i - 1, j);
+
+						if (botValue != -1 && curValue != botValue)
+						{
+							if (std::find(m_regions[curValue].neighbors.begin(), m_regions[curValue].neighbors.end(),
+								botValue) == m_regions[curValue].neighbors.end())
+							{
+								m_regions[curValue].neighbors.push_back(botValue);
+							}
+						}
+					}
+
+					if (i + i < m_labels.rows)
+					{
+						topValue = m_labels.at<int>(i + 1, j);
+
+						if (topValue != -1 && curValue != topValue)
+						{
+							if (std::find(m_regions[curValue].neighbors.begin(), m_regions[curValue].neighbors.end(),
+								topValue) == m_regions[curValue].neighbors.end())
+							{
+								m_regions[curValue].neighbors.push_back(topValue);
+							}
 						}
 					}
 				}
 			}
 		}
 
-		void make_merge_image(cv::Mat &mergeImage)
+		bool merge_region_with_neighbors(size_t regionLabel, double stddev, double meanDeviation, double scaleFactor)
+		{
+			for (std::vector<unsigned int>::iterator neighbor = m_regions[regionLabel].neighbors.begin();
+				 neighbor != m_regions[regionLabel].neighbors.end(); neighbor++)
+			{
+				if (!m_regions[*neighbor].isActive)
+					continue;
+
+				unsigned int mergedSum = m_regions[regionLabel].sum + m_regions[*neighbor].sum;
+				unsigned int mergedQuadSum = m_regions[regionLabel].quadSum + m_regions[*neighbor].quadSum;
+				unsigned int mergedPixelNum = m_regions[regionLabel].pixelNum + m_regions[*neighbor].pixelNum;
+				
+				double mean = m_regions[regionLabel].sum / double(m_regions[regionLabel].pixelNum);
+				double mergedMean = mergedSum / double(mergedPixelNum);
+				double mergedQuadMean = mergedQuadSum / double(mergedPixelNum);
+				double mergedStddev = sqrt(mergedQuadMean - mergedMean * mergedMean);
+
+				if (abs(mergedMean - mean) <= meanDeviation &&
+					m_regions[regionLabel].pixelNum / double(m_regions[*neighbor].pixelNum) <= scaleFactor &&
+					m_regions[regionLabel].pixelNum / double(m_regions[*neighbor].pixelNum) >= 1 / scaleFactor)
+				{
+					m_regions[*neighbor].isActive = false;
+
+					m_regions[regionLabel].sum = mergedSum;
+					m_regions[regionLabel].quadSum = mergedQuadSum;
+					m_regions[regionLabel].pixelNum = mergedPixelNum;
+
+					for (auto &newArea : m_regions[*neighbor].areas)
+						m_regions[regionLabel].areas.push_back(newArea);
+
+					for (unsigned int newNeighbor : m_regions[*neighbor].neighbors)
+					{
+						if (newNeighbor != regionLabel)
+						{
+							m_regions[regionLabel].neighbors.push_back(newNeighbor);
+						}
+					}	
+					
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		void merge_process(double stddev, double meanDeviation, double scaleFactor)
+		{
+			bool needToStop = false;
+			while (!needToStop)
+			{
+				needToStop = true;
+				for (size_t regionNum = 0; regionNum < m_regions.size(); regionNum++)
+				{
+					if (m_regions[regionNum].isActive)
+					{
+						if (merge_region_with_neighbors(regionNum, stddev, meanDeviation, scaleFactor))
+						{
+							needToStop = false;
+						}
+					}
+				}
+			}
+		}
+
+		void make_merge_image()
 		{
 			for (auto &region : m_regions)
 			{
-				unsigned char mean = region.sum / region.pixelNum;
-				for (auto &area : region.areas)
+				if (region.isActive)
 				{
-					cv::rectangle(mergeImage, area, cv::Scalar(mean));
+					unsigned char mean = region.sum / double(region.pixelNum) + 0.5;
+					for (auto &area : region.areas)
+					{
+						cv::rectangle(m_mergeImage, area, cv::Scalar(mean), -1);
+					}
 				}
 			}
 		}
@@ -224,21 +252,24 @@ namespace
 		std::vector<Region> m_regions;
 		cv::Mat m_image;
 		cv::Mat m_splitImage;
+		cv::Mat m_mergeImage;
 		cv::Mat m_labels;
-		unsigned int labelNum = 0;
 	};
 }
 
 namespace cvlib
 {
-	cv::Mat split_and_merge(const cv::Mat& image, double stddev)
+	cv::Mat split_and_merge(const cv::Mat& image, double stddev, int minSquare, double meanDeviation, double scaleFactor)
 	{
 		cv::Mat splitImage;
 		cv::Mat mergeImage;
 		SplitAndMerge splitAndMerge;
 
-		splitAndMerge.Process(image, splitImage, mergeImage, stddev);
+		splitAndMerge.Process(image, splitImage, mergeImage, stddev, minSquare, meanDeviation, scaleFactor);
+
+		//cv::imshow("Split image", splitImage);
+		//cv::imshow("Difference image", abs(splitImage - mergeImage) * 255);
     
-		return splitImage;
+		return mergeImage;
 	}
 } // namespace cvlib
