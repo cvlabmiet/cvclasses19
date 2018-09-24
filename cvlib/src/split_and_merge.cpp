@@ -1,6 +1,4 @@
-/* Split and merge
- * segmentation
- * algorithm implementation.
+/* Split and merge segmentation algorithm implementation.
  * @file
  * @date 2018-09-17
  * @author Vladislav Dimakov
