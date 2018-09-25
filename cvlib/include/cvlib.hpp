@@ -15,7 +15,15 @@ namespace cvlib
 /// \param image, in - input image
 /// \param stddev, in - threshold to treat regions as homogeneous
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev, int minSquare, double meanDeviation, double scaleFactor);
+void split_and_merge(const cv::Mat& image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev, int minSquare, double meanDeviation,
+                     double scaleFactor);
+
+/// \brief Segment texuture on passed image according to sample in ROI
+/// \param image, in - input image
+/// \param roi, in - region with sample texture on passed image
+/// \param eps, in - threshold parameter for texture's descriptor distance
+/// \return binary mask with selected texture
+cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps);
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__

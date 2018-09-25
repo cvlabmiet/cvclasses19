@@ -4,40 +4,34 @@
  * @author Vladislav Dimakov
  */
 
-#include <cvlib.hpp>
 #include <opencv2/opencv.hpp>
+
+int demo_split_and_merge(int argc, char* argv[]); // lab 1
+int demo_select_texture(int argc, char* argv[]); // lab 2
 
 int main(int argc, char* argv[])
 {
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened())
-        return -1;
+    cv::namedWindow("main");
+    cv::Mat help = cv::Mat::zeros(300, 500, CV_8UC3);
+    cv::putText(help, "Press ESC to exit", cv::Point(30, 30), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::putText(help, "Press 1 for Lab 1 Demo (split and merge)", cv::Point(30, 50), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::putText(help, "Press 2 for Lab 2 Demo (texture segmentation)", cv::Point(30, 70), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, CV_AA);
+    cv::imshow("main", help);
 
-    cv::Mat frame;
-    cv::Mat frame_gray;
-
-    const auto origin_wnd = "origin";
-    const auto demo_wnd = "demo";
-
-    int stddev = 8;
-    int minSquare = 25;
-    int meanDeviation = 2;
-    int scaleFactor = 20;
-
-    cv::namedWindow(demo_wnd, 1);
-    cv::createTrackbar("stddev", demo_wnd, &stddev, 128); // stddev[{0, 255}] = 127.5
-    cv::createTrackbar("square", demo_wnd, &minSquare, 100);
-    cv::createTrackbar("mean", demo_wnd, &meanDeviation, 10);
-    cv::createTrackbar("scale", demo_wnd, &scaleFactor, 50);
-
-    while (cv::waitKey(30) != 27) // ESC
+    while (true)
     {
-        cap >> frame;
+        int key = cv::waitKey(0);
 
-        cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
-        cv::imshow(origin_wnd, frame);
-        cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev, minSquare, meanDeviation, scaleFactor));
+        switch (key)
+        {
+            case '1':
+                demo_split_and_merge(argc, argv);
+                break;
+            case '2':
+                demo_select_texture(argc, argv);
+                break;
+            case 27: // ESC
+                return 0;
+        }
     }
-
-    return 0;
 }

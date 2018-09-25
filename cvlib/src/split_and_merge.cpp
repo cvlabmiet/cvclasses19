@@ -22,7 +22,7 @@ struct Region
 class SplitAndMerge
 {
     public:
-    void Process(cv::Mat image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev, int minSquare, double meanDeviation, double scaleFactor)
+    void Process(const cv::Mat& image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev, int minSquare, double meanDeviation, double scaleFactor)
     {
         m_regions.clear();
 
@@ -259,16 +259,9 @@ class SplitAndMerge
 
 namespace cvlib
 {
-cv::Mat split_and_merge(const cv::Mat& image, double stddev, int minSquare, double meanDeviation, double scaleFactor)
+void split_and_merge(const cv::Mat& image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev, int minSquare, double meanDeviation, double scaleFactor)
 {
-    cv::Mat splitImage, mergeImage;
     SplitAndMerge splitAndMerge;
-
     splitAndMerge.Process(image, splitImage, mergeImage, stddev, minSquare, meanDeviation, scaleFactor);
-
-    // cv::imshow("Splitimage", splitImage);
-    // cv::imshow("Differenceimage", abs(splitImage - mergeImage) * 255);
-
-    return mergeImage;
 }
 } // namespace cvlib
