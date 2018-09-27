@@ -66,6 +66,7 @@ int demo_select_texture(int argc, char* argv[])
             const auto segmented = mask.clone();
             frame_gray.copyTo(segmented, mask);
             cv::imshow(demo_wnd, segmented);
+            //cv::imshow(demo_wnd, mask);
             cv::rectangle(data.image, data.tl, data.br, cv::Scalar(0, 0, 255));
         }
         cv::imshow(data.wnd, data.image);
