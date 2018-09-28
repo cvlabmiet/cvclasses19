@@ -1,7 +1,7 @@
 /* Demo application for Computer Vision Library.
  * @file
  * @date 2018-09-05
- * @author Anonymous
+ * @author Dmitrij Vukalov
  */
 
 #include <opencv2/opencv.hpp>
@@ -52,12 +52,11 @@ int demo_select_texture(int argc, char* argv[])
     cv::setMouseCallback(data.wnd, mouse, &data);
 
     cv::Mat frame_gray;
-    
 
-	while (cv::waitKey(30) != 27) // ESC
+    while (cv::waitKey(30) != 27) // ESC
     {
         cap >> data.image;
-        //data.image = cv::imread("D:/ClangFormat/2.jpg", 1);
+        // data.image = cv::imread("D:/ClangFormat/2.jpg", 1);
         cv::cvtColor(data.image, frame_gray, cv::COLOR_BGR2GRAY);
         const cv::Rect roi = {data.tl, data.br};
         if (roi.area())
@@ -65,8 +64,8 @@ int demo_select_texture(int argc, char* argv[])
             const auto mask = cvlib::select_texture(frame_gray, roi, eps);
             const auto segmented = mask.clone();
             frame_gray.copyTo(segmented, mask);
+            // cv::imshow(demo_wnd, segmented);
             cv::imshow(demo_wnd, segmented);
-            //cv::imshow(demo_wnd, mask);
             cv::rectangle(data.image, data.tl, data.br, cv::Scalar(0, 0, 255));
         }
         cv::imshow(data.wnd, data.image);

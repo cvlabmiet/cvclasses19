@@ -23,6 +23,7 @@ cv::Mat split_and_merge(const cv::Mat& image, double stddev);
 /// \param eps, in - threshold parameter for texture's descriptor distance
 /// \return binary mask with selected texture
 cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps);
+
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
