@@ -28,6 +28,7 @@ cv::Mat split_only(const cv::Mat& image, double stddev);
 /// \param image, in - input image
 /// \param roi, in - region with sample texture on passed image
 /// \param eps, in - threshold parameter for texture's descriptor distance
+/// \param roiChanged, in - flag for Gabor kernel recount
 /// \return binary mask with selected texture
 cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps, bool roiChanged);
 } // namespace cvlib

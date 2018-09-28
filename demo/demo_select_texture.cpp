@@ -10,33 +10,37 @@
 
 namespace
 {
-    bool gRoiChanged = false;
-    bool gMousePressed = false;
+bool gRoiChanged = false;
+bool gMousePressed = false;
 
-    struct user_data
-    {
-        std::string wnd;
-        cv::Point tl;
-        cv::Point br;
-        cv::Mat image;
-    };
+struct user_data
+{
+    std::string wnd;
+    cv::Point tl;
+    cv::Point br;
+    cv::Mat image;
+};
 
-    void mouse(int event, int x, int y, int flags, void* param)
+void mouse(int event, int x, int y, int flags, void* param)
+{
+    user_data& data = *reinterpret_cast<user_data*>(param);
+    if (event == CV_EVENT_LBUTTONDOWN)
     {
-        user_data& data = *reinterpret_cast<user_data*>(param);
-        if (event == CV_EVENT_LBUTTONDOWN)
-        {
-            gMousePressed = true;
-            data.tl = {x, y};
-        }
-        //else if (event == CV_EVENT_RBUTTONDOWN)
-        else if (event == CV_EVENT_LBUTTONUP)
-        {
-            gMousePressed = false;
-            gRoiChanged = true;
-            data.br = {x, y};
-        }
+        gMousePressed = true;
+        data.tl = {x, y};
     }
+    // else if (event == CV_EVENT_RBUTTONDOWN)
+    else if (event == CV_EVENT_LBUTTONUP)
+    {
+        gMousePressed = false;
+        gRoiChanged = true;
+        data.br = {x, y};
+    }
+    else if (gMousePressed)
+    {
+        data.br = {x, y};
+    }
+}
 } // namespace
 
 int demo_select_texture(int argc, char* argv[])
@@ -76,7 +80,8 @@ int demo_select_texture(int argc, char* argv[])
             }
             cv::rectangle(data.image, data.tl, data.br, cv::Scalar(0, 0, 255));
 
-            if (gRoiChanged) gRoiChanged = false;
+            if (gRoiChanged)
+                gRoiChanged = false;
         }
         cv::imshow(data.wnd, data.image);
     }

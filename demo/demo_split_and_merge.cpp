@@ -33,8 +33,8 @@ int demo_split_and_merge(int argc, char* argv[])
     {
         cap >> frame;
 
-        std::vector <cv::Mat> rgb4split;
-        std::vector <cv::Mat> rgb4split_and_merge;
+        std::vector<cv::Mat> rgb4split;
+        std::vector<cv::Mat> rgb4split_and_merge;
         cv::split(frame, rgb4split);
         cv::split(frame, rgb4split_and_merge);
 
