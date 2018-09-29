@@ -3,15 +3,21 @@
 #       target_name - the name of the target whose sources will be checked
 #       <additional files> - additional files to checks
 
-find_program(STYLE_CHECKER clang-format NO_CMAKE_ENVIRONMENT_PATH)
-if(NOT STYLE_CHECKER)
-    message(WARNING "Style checker not found")
-    return()
-endif()
+if (UNIX)
+    find_program(STYLE_CHECKER clang-format NO_CMAKE_ENVIRONMENT_PATH)
+    if(NOT STYLE_CHECKER)
+        message(WARNING "Style checker not found")
+        return()
+    endif()
 
-add_custom_target(checkstyle)
+    add_custom_target(checkstyle)
+endif (UNIX)
 
 function(check_files_style target)
+    if (WIN32)
+        return()
+    endif (WIN32)
+
     get_target_property(SRCS ${target} SOURCES)
 
     foreach(SRC ${SRCS} ${ARGN})
