@@ -15,7 +15,8 @@ namespace cvlib
 /// \param image, in - input image
 /// \param stddev, in - threshold to treat regions as homogeneous
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev);
+void split_and_merge(const cv::Mat& image, cv::Mat& splitImage, cv::Mat& mergeImage, double stddev, int minSquare, double meanDeviation,
+                     double scaleFactor);
 
 /// \brief Segment texuture on passed image according to sample in ROI
 /// \param image, in - input image

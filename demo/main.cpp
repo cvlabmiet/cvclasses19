@@ -1,7 +1,7 @@
 /* Demo application for Computer Vision Library.
  * @file
- * @date 2018-09-05
- * @author Anonymous
+ * @date 2018-09-17
+ * @author Vladislav Dimakov
  */
 
 #include <opencv2/opencv.hpp>
