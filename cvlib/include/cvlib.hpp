@@ -67,6 +67,57 @@ class corner_detector_fast : public cv::Feature2D
         return "FAST_Binary";
     }
 };
+
+/// \brief Descriptor matched based on ratio of SSD
+class descriptor_matcher : public cv::DescriptorMatcher
+{
+    public:
+    /// \brief ctor
+    descriptor_matcher(float ratio = 1.5) : ratio_(ratio)
+    {
+    }
+
+    /// \brief setup ratio threshold for SSD filtering
+    void set_ratio(float r)
+    {
+        ratio_ = r;
+    }
+
+    protected:
+    /// \see cv::DescriptorMatcher::knnMatchImpl
+    virtual void knnMatchImpl(cv::InputArray queryDescriptors, std::vector<std::vector<cv::DMatch>>& matches, int k,
+                              cv::InputArrayOfArrays masks = cv::noArray(), bool compactResult = false) override;
+
+    /// \see cv::DescriptorMatcher::radiusMatchImpl
+    virtual void radiusMatchImpl(cv::InputArray queryDescriptors, std::vector<std::vector<cv::DMatch>>& matches, float maxDistance,
+                                 cv::InputArrayOfArrays masks = cv::noArray(), bool compactResult = false) override;
+
+    /// \see cv::DescriptorMatcher::isMaskSupported
+    virtual bool isMaskSupported() const override
+    {
+        return false;
+    }
+
+    /// \see cv::DescriptorMatcher::isMaskSupported
+    virtual cv::Ptr<cv::DescriptorMatcher> clone(bool emptyTrainData = false) const override
+    {
+        cv::Ptr<cv::DescriptorMatcher> copy = new descriptor_matcher(*this);
+        if (emptyTrainData)
+        {
+            copy->clear();
+        }
+        return copy;
+    }
+
+    private:
+    float ratio_;
+};
+
+/// \brief Stitcher for merging images into big one
+class Stitcher
+{
+    /// \todo design and implement
+};
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
