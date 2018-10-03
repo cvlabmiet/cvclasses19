@@ -14,8 +14,10 @@ int demo_split_and_merge(int argc, char* argv[])
     if (!cap.isOpened())
         return -1;
 
-    cv::Mat frame;
+    cv::Mat frame, copy_frame;
     cv::Mat frame_gray;
+    cv::Mat split_and_merge;
+    cv::Mat diff, split;
 
     const auto origin_wnd = "origin";
     const auto demo_wnd = "demo";
@@ -30,8 +32,15 @@ int demo_split_and_merge(int argc, char* argv[])
         cap >> frame;
 
         cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+        frame_gray.copyTo(copy_frame);
         cv::imshow(origin_wnd, frame);
-        cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev));
+        
+        split_and_merge = cvlib::split_and_merge(frame_gray, stddev);
+        cv::imshow(demo_wnd, split_and_merge);
+        split = cvlib::only_split(copy_frame, stddev);
+        cv::absdiff(split_and_merge, split, diff);
+        cv::imshow("diff", diff * 20);
+		
     }
 
     cv::destroyWindow(origin_wnd);

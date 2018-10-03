@@ -16,8 +16,8 @@ namespace cvlib
 /// \param stddev, in - threshold to treat regions as homogeneous
 /// \return segmented image
 cv::Mat split_and_merge(const cv::Mat& image, double stddev);
-
-/// \brief Segment texuture on passed image according to sample in ROI
+cv::Mat only_split(const cv::Mat& image, double stddev);
+    /// \brief Segment texuture on passed image according to sample in ROI
 /// \param image, in - input image
 /// \param roi, in - region with sample texture on passed image
 /// \param eps, in - threshold parameter for texture's descriptor distance
