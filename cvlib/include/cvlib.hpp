@@ -29,14 +29,11 @@ cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps);
 class motion_segmentation : public cv::BackgroundSubtractor
 {
     public:
-
-    
     /// \brief ctor
     motion_segmentation()
     {
         m_frame_counter = 0;
-        //m_bg_model_.zeros(cv::Size(640, 480), CV_8U);
-
+        // m_bg_model_.zeros(cv::Size(640, 480), CV_8U);
     }
 
     /// \see cv::BackgroundSubtractor::apply
@@ -55,23 +52,22 @@ class motion_segmentation : public cv::BackgroundSubtractor
 
     void setAlpha(int al)
     {
-        m_alpha = al / 100;
+        m_alpha = (double)al / 100;
     }
 
     private:
     cv::Mat m_bg_model_;
-    
+
     // Порог
     int m_threshold;
     // Количество кадров, участвующих в вычислении фона
     int m_max_frame;
     // счетчик кадров
     int m_frame_counter;
-    
+
     double m_alpha;
     //
 };
 } // namespace cvlib
 
 #endif // __CVLIB_HPP__
-

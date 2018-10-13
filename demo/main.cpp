@@ -10,7 +10,6 @@ int demo_split_and_merge(int argc, char* argv[]); // lab 1
 int demo_select_texture(int argc, char* argv[]); // lab 2
 int demo_motion_segmentation(int argc, char* argv[]); // lab 3
 
-
 int main(int argc, char* argv[])
 {
     cv::namedWindow("main");
