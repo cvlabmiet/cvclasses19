@@ -11,12 +11,11 @@
 
 using namespace std::chrono;
 
-
 int demo_motion_segmentation(int argc, char* argv[])
 {
-    //const cv::String filename = "D:/ClangFormat/Video2.mp4";
+    // const cv::String filename = "D:/ClangFormat/Video2.mp4";
     const int filename = 0;
-    //cv::VideoCapture cap(0);
+    // cv::VideoCapture cap(0);
     cv::VideoCapture cap(filename);
     if (!cap.isOpened())
         return -1;
@@ -50,42 +49,39 @@ int demo_motion_segmentation(int argc, char* argv[])
         if (frame.empty())
         {
             cap.release();
-            //cap.open(0);
+            // cap.open(0);
             cap.open(filename);
         }
         else
         {
-            //t1 = high_resolution_clock::now();
+            // t1 = high_resolution_clock::now();
             mseg.setThreshold(threshold);
 
-            
             mseg.setAlpha(alpha);
-            
+
             ////duration = (t2 - t1);
 
             cv::imshow(main_wnd, frame);
             cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
-           
+
             mseg.apply(frame, frame_mseg, 0);
-            
-            //t2 = high_resolution_clock::now();
-            //duration = (t2 - t1);
-            
+
+            // t2 = high_resolution_clock::now();
+            // duration = (t2 - t1);
+
             end = std::clock();
-            
-           
+
             if (!frame_mseg.empty())
                 cv::imshow(demo_wnd, frame_mseg);
-            
+
             system("cls");
             std::cout << "FPS" << int(double(CLOCKS_PER_SEC) / (end - beg)) << std::endl;
             beg = end;
 
             // mseg->setVarThreshold(threshold); // \todo use TackbarCallback
             // mseg->apply(frame, frame_mseg);
-            
         }
-            
+
         // std::cout << "FPS" << cap.get(CV_CAP_PROP_FPS) << std::endl;
     }
 
