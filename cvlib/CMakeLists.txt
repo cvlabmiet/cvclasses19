@@ -14,9 +14,8 @@ target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
 # Unit Tests
-file(GLOB TESTS tests/*.cpp tests/*.hpp tests/*/*.hpp)
+file(GLOB TESTS tests/*.cpp)
 add_executable(${PROJECT_NAME}_tests ${TESTS})
-target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS})
 
 # Catch2
 if(NOT EXISTS ${PROJECT_SOURCE_DIR}/tests/catch2)
@@ -47,6 +46,8 @@ else()
   message(STATUS "Use existed catch2")
   include_directories(tests)
 endif()
+
+target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS})
 
 ParseAndAddCatchTests(${PROJECT_NAME}_tests)
 file(GLOB_RECURSE CHECK_FILES *.cpp)

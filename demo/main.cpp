@@ -47,8 +47,8 @@ int main(int argc, char* argv[])
                 demo_motion_segmentation(argc, argv);
                 break;
             case '4':
-               demo_corner_detector(argc, argv);
-               break;
+                demo_corner_detector(argc, argv);
+                break;
             case 27: // ESC
                 return 0;
         }
