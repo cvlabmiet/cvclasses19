@@ -16,9 +16,11 @@ target_include_directories(${PROJECT_NAME} INTERFACE include)
 # Unit Tests
 file(GLOB TESTS tests/*.cpp tests/*.hpp tests/*/*.hpp)
 add_executable(${PROJECT_NAME}_tests ${TESTS})
+target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS})
 
 # Catch2
-if(NOT EXISTS "tests/catch2/catch.hpp")
+if(NOT EXISTS ${PROJECT_SOURCE_DIR}/tests/catch2)
+  message(STATUS "Add catch2 as separate library")
   include(ExternalProject)
 
   ExternalProject_Add(
@@ -40,11 +42,12 @@ if(NOT EXISTS "tests/catch2/catch.hpp")
   add_library(catch2 INTERFACE)
   target_include_directories(catch2 INTERFACE ${download_dir}/..)
   add_library(catch2::catch ALIAS catch2)
-  target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS} catch2)
+  target_link_libraries(${PROJECT_NAME}_tests catch2)
 else()
-  target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS})
+  message(STATUS "Use existed catch2")
+  include_directories(tests)
 endif()
 
 ParseAndAddCatchTests(${PROJECT_NAME}_tests)
-file(GLOB_RECURSE CHECK_FILES *.cpp *.hpp)
+file(GLOB_RECURSE CHECK_FILES *.cpp)
 check_files_style(${PROJECT_NAME} ${CHECK_FILES})
