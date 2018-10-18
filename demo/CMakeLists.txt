@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 14)
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-file(GLOB SRC *.cpp)
+file(GLOB SRC *.cpp *.hpp)
 add_executable(${PROJECT_NAME} ${SRC})
 target_link_libraries(${PROJECT_NAME} cvlib ${OpenCV_LIBS})
 

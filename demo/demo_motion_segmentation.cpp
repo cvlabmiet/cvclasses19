@@ -4,12 +4,10 @@
  * @author Dmitrij Vukalov
  */
 
-#include <chrono>
-#include <ctime>
 #include <cvlib.hpp>
 #include <opencv2/opencv.hpp>
 
-using namespace std::chrono;
+#include "utils.hpp"
 
 int demo_motion_segmentation(int argc, char* argv[])
 {
@@ -36,12 +34,7 @@ int demo_motion_segmentation(int argc, char* argv[])
     cv::Mat frame;
     cv::Mat frame_mseg;
 
-    high_resolution_clock::time_point t1, t2;
-    duration<float> duration;
-
-    clock_t end;
-    clock_t beg = std::clock();
-
+    utils::fps_counter fps;
     while (cv::waitKey(30) != 27) // ESC
     {
         cap >> frame;
@@ -54,35 +47,21 @@ int demo_motion_segmentation(int argc, char* argv[])
         }
         else
         {
-            // t1 = high_resolution_clock::now();
             mseg.setThreshold(threshold);
 
             mseg.setAlpha(alpha);
-
-            ////duration = (t2 - t1);
 
             cv::imshow(main_wnd, frame);
             cv::cvtColor(frame, frame, cv::COLOR_BGR2GRAY);
 
             mseg.apply(frame, frame_mseg, 0);
 
-            // t2 = high_resolution_clock::now();
-            // duration = (t2 - t1);
-
-            end = std::clock();
-
             if (!frame_mseg.empty())
+            {
+                utils::put_fps_text(frame_mseg, fps);
                 cv::imshow(demo_wnd, frame_mseg);
-
-            system("cls");
-            std::cout << "FPS" << int(double(CLOCKS_PER_SEC) / (end - beg)) << std::endl;
-            beg = end;
-
-            // mseg->setVarThreshold(threshold); // \todo use TackbarCallback
-            // mseg->apply(frame, frame_mseg);
+            }
         }
-
-        // std::cout << "FPS" << cap.get(CV_CAP_PROP_FPS) << std::endl;
     }
 
     cv::destroyWindow(main_wnd);
