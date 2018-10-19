@@ -77,6 +77,21 @@ class corner_detector_fast : public cv::Feature2D
 
     /// \see Feature2d::detect
     virtual void detect(cv::InputArray image, CV_OUT std::vector<cv::KeyPoint>& keypoints, cv::InputArray mask = cv::noArray()) override;
+
+    void setThreshold(int tr)
+    {
+        m_threshold = 10;
+    }
+
+    int getNumPoint()
+    {
+        return m_num_point;
+    }
+
+    private:
+    int m_threshold;
+    int m_num_point;
+
 };
 } // namespace cvlib
 

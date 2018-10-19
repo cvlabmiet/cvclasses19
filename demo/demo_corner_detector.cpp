@@ -9,6 +9,12 @@
 
 #include "utils.hpp"
 
+void on_threshold_changed(int value, void *ptr)
+{
+    ((cvlib::corner_detector_fast*)(ptr))->setThreshold(value);
+}
+
+
 int demo_corner_detector(int argc, char* argv[])
 {
     cv::VideoCapture cap(0);
@@ -22,8 +28,15 @@ int demo_corner_detector(int argc, char* argv[])
     cv::namedWindow(demo_wnd);
 
     cv::Mat frame;
-    auto detector = cv::GFTTDetector::create(); // \todo use cvlib::corner_detector_fast
+    //auto detector = cv::GFTTDetector::create(); // \todo use cvlib::corner_detector_fast
+    //auto detector = cv::FastFeatureDetector::create();
+    auto detector = cvlib::corner_detector_fast::create();
     std::vector<cv::KeyPoint> corners;
+
+    int threshold = 10;
+    cv::createTrackbar("th", demo_wnd, &threshold, 50);
+
+    cv::Mat frame_gray;
 
     utils::fps_counter fps;
     while (cv::waitKey(30) != 27) // ESC
@@ -31,7 +44,10 @@ int demo_corner_detector(int argc, char* argv[])
         cap >> frame;
         cv::imshow(main_wnd, frame);
 
-        detector->detect(frame, corners);
+        //detector->setThreshold(threshold);
+        cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+        detector->detect(frame_gray, corners);
+     
         cv::drawKeypoints(frame, corners, frame, cv::Scalar(0, 0, 255));
         utils::put_fps_text(frame, fps);
         // \todo add count of the detected corners at the top left corner of the image. Use green text color.
