@@ -38,6 +38,19 @@ class motion_segmentation : public cv::BackgroundSubtractor
 public:
     /// \brief ctor
     motion_segmentation();
+	
+	cv::Mat getMin() const
+	{
+		return mMin;
+	}
+	cv::Mat getMax() const
+	{
+		return mMax;
+	}
+	cv::Mat getDiff() const
+	{
+		return mDiff;
+	}
 
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = -1) override;
