@@ -91,7 +91,6 @@ class corner_detector_fast : public cv::Feature2D
     private:
     int m_threshold;
     int m_num_point;
-
 };
 } // namespace cvlib
 

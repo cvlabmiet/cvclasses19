@@ -53,6 +53,12 @@ struct fps_counter
 /// \param fps, in/out - fps_counter which is used for tracking processed frames
 /// \param color, in - the color of text
 void put_fps_text(cv::Mat& image, fps_counter& fps, cv::Scalar color = {255, 0, 0});
+
+/// \brief Adds the number of angles found in the image
+/// \param image, in/out - image where FPS will be printed
+/// \param num_corners, in - the number of angles found in the image
+/// \param color, in - the color of text
+void put_num_corners_text(cv::Mat& image, int num_corners, cv::Scalar color = (255, 0, 0));
 } // namespace utils
 
 #endif // __UTILS_HPP__
