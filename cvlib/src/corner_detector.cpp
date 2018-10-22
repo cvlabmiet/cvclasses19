@@ -5,11 +5,6 @@
  */
 
 #include "cvlib.hpp"
-
-const int gThresh = 10;
-const int gWS[16] = {0,0,3,-3,1,2,3,3,2,1,-1,-2,-3,-3,-2,-1}; // Width Shifts
-const int gHS[16] = {3,-3,0,0,1,2,3,-3,-2,-1,1,2,3,-3,-2,-1}; // Height Shifts
-typedef unsigned char uchar;
  
 /*
  *	. . * U * . .
@@ -33,7 +28,10 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
 {
     keypoints.clear();	
 	cv::Mat mat = image.getMat();
-	cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+	if (mat.channels() == 3) cv::cvtColor(mat, mat, cv::COLOR_BGR2GRAY);
+	const int gThresh = 10;
+	const int gWS[16] = {0,0,3,-3,1,2,3,3,2,1,-1,-2,-3,-3,-2,-1}; // Width Shifts
+	const int gHS[16] = {3,-3,0,0,1,2,3,-3,-2,-1,1,2,3,-3,-2,-1}; // Height Shifts
 	
 	/*for (int w = 3; w < mat.size().width - 3; w++) { // 3 - radius of segment
 		for (int h = 3; h < mat.size().height - 3; h++) {
@@ -71,15 +69,15 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
 	for (int w = 3; w < mat.size().width - 3; w++) { // 3 - radius of segment
 		for (int h = 3; h < mat.size().height - 3; h++) {
 			int cnt = 0;
-			double pixC = (double)mat.at<uchar>(h,w); // central pixel
+			double pixC = (double)mat.at<unsigned char>(h,w); // central pixel
 			for (int i = 0; i < 4; i++) { // Check 4 main pixels (Up, Down, Left and Right)
-				if (std::abs(pixC-(double)mat.at<uchar>(h+gHS[i],w+gWS[i])) > gThresh) cnt++;
+				if (std::abs(pixC-(double)mat.at<unsigned char>(h+gHS[i],w+gWS[i])) > gThresh) cnt++;
 			}
 			if (cnt > 2) { // if may-be-corner, check other 12 pixels
 				for (int i = 4; i < 16; i++) {
-					if (std::abs(pixC-(double)mat.at<uchar>(h+gHS[i],w+gWS[i])) > gThresh) cnt++;
+					if (std::abs(pixC-(double)mat.at<unsigned char>(h+gHS[i],w+gWS[i])) > gThresh) cnt++;
 				}
-				if (cnt > 12) keypoints.push_back(cv::KeyPoint((float)w,(float)h,3.0f));
+				if (cnt >= 12) keypoints.push_back(cv::KeyPoint((float)w,(float)h,3.0f));
 			}
 		}
 	}

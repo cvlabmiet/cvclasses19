@@ -77,4 +77,24 @@ void put_fps_text(cv::Mat& image, fps_counter& fps, cv::Scalar color /*= (255, 0
 
     cv::putText(image, ss.str(), textOrgPoint, txtFont, fontScale, color, thickness, 8, false);
 }
+
+void put_kp_count_text(cv::Mat& image, size_t kp_count, cv::Scalar color /*= (255, 255, 255)*/)
+{
+    const auto txtFont = CV_FONT_HERSHEY_SIMPLEX;
+    const auto fontScale = 0.5;
+    const auto thickness = 1;
+    static const cv::Size textSize = cv::getTextSize("KP: 10000", txtFont, fontScale, thickness, nullptr);
+    static const cv::Point textOrgPoint = {0, 12};
+    static const cv::Point rectPoint1 = {0, 0};
+    static const cv::Point rectPoint2 = {textSize.width + 2, 15};
+
+    std::stringstream ss;
+    ss << "KP: " << kp_count;
+
+	cv::Rect fpsRect = cv::Rect(rectPoint1, rectPoint2);
+	cv::rectangle(image, fpsRect, cv::Scalar(0,0,0), -1);
+
+    cv::putText(image, ss.str(), textOrgPoint, txtFont, fontScale, color, thickness, 8, false);
+}
+
 } // namespace utils
