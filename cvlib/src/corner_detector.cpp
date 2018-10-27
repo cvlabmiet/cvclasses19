@@ -24,15 +24,15 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
     m_num_point = 0;
     cv::Size image_size = image.size();
     cv::Mat imag = image.getMat();
-    //                  1    2   3   4  5  6  7  8  9  10 11 12 13 14  15  16
-    int offset_i[16] = {-3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3};
-    int offset_j[16] = {0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1};
 
-    std::vector<int> circle_points(16);
+    std::vector<int> etalon_1(12);
+    std::vector<int> etalon_2(12);
+    std::fill(etalon_1.begin(), etalon_1.end(), 1);
+    std::fill(etalon_2.begin(), etalon_2.end(), 2);
+
     int i_c, i_plus_thresh, i_minus_thresh;
 
     for (auto i = 3; i < image_size.height - 3; i++)
-    {
         for (auto j = 3; j < image_size.width - 3; j++)
         {
             i_c = imag.at<unsigned char>(i, j);
@@ -51,25 +51,21 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
 
             if (light > 2 || dark > 2)
             {
-                int num_dark_points = std::count_if(circle_points.begin(), circle_points.end(), [=](int n) { return (n < i_minus_thresh); });
-                if (num_dark_points > 11)
+                copyVector();
+                std::transform(cyclic_buffer.begin(), cyclic_buffer.end(), cyclic_buffer.begin(),
+                               [=](int n) { return (n < i_minus_thresh) + 2 * (n > i_plus_thresh); });
+                
+                auto it_dark = std::search(cyclic_buffer.begin(), cyclic_buffer.end(), etalon_1.begin(), etalon_1.end());
+                auto it_ligth = std::search(cyclic_buffer.begin(), cyclic_buffer.end(), etalon_2.begin(), etalon_2.end());
+                
+                if (it_dark != cyclic_buffer.end() || it_ligth != cyclic_buffer.end())
                 {
                     m_num_point++;
                     keypoints.push_back(cv::KeyPoint(cv::Point2f(double(j), double(i)), 10, float(0)));
                 }
-                else
-                {
-                    int num_ligth_points = std::count_if(circle_points.begin(), circle_points.end(), [=](int n) { return n > i_plus_thresh; });
-                    if (num_ligth_points > 11)
-                    {
-                        m_num_point++;
-                        keypoints.push_back(cv::KeyPoint(cv::Point2f(double(j), double(i)), 10, float(0)));
-                    }
-                }
+                cyclic_buffer.clear();
             }
-
             circle_points.clear();
         }
-    }
 }
 } // namespace cvlib

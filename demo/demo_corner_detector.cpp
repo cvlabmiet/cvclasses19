@@ -33,24 +33,24 @@ int demo_corner_detector(int argc, char* argv[])
     std::vector<cv::KeyPoint> corners;
 
     int threshold = 20;
-    cv::createTrackbar("th", demo_wnd, &threshold, 50, on_threshold_changed, (void*)detector);
+    cv::createTrackbar("th", demo_wnd, &threshold, 100, on_threshold_changed, (void*)detector);
 
     cv::Mat frame_gray;
 
-    detector->setVarThreshold(threshold);
+    // detector->setVarThreshold(threshold);
     utils::fps_counter fps;
     while (cv::waitKey(30) != 27) // ESC
     {
         cap >> frame;
         cv::imshow(main_wnd, frame);
 
-        // detector->setVarThreshold(threshold);
+        detector->setVarThreshold(threshold);
         cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
         detector->detect(frame_gray, corners);
 
         cv::drawKeypoints(frame, corners, frame, cv::Scalar(0, 0, 255));
         utils::put_fps_text(frame, fps);
-        utils::put_num_corners_text(frame, detector->getNumPoint());
+        utils::put_num_corners_text(frame, detector->getNumPoint(), cv::Scalar(125, 225, 0));
         // \todo add count of the detected corners at the top left corner of the image. Use green text color.
         cv::imshow(demo_wnd, frame);
     }

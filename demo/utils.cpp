@@ -77,9 +77,9 @@ void put_num_corners_text(cv::Mat& image, int num_corners, cv::Scalar color /*= 
 {
     const auto txtFont = CV_FONT_HERSHEY_SIMPLEX;
     const auto fontScale = 0.5;
-    const auto thickness = 1;
-    static const cv::Size textSize = cv::getTextSize("Corners: 100", txtFont, fontScale, thickness, nullptr);
-    static const cv::Point textOrgPoint = {image.size().width - textSize.width, image.size().height - 5};
+    const auto thickness = 2;
+    static const cv::Size textSize = cv::getTextSize("Corners: 100000", txtFont, fontScale, thickness, nullptr);
+    static const cv::Point textOrgPoint = {image.size().width - textSize.width, image.size().height - 10};
 
     std::stringstream ss;
     ss.precision(5);

@@ -9,6 +9,7 @@
 #define __CVLIB_HPP__
 
 #include <opencv2/opencv.hpp>
+#include <vector>
 
 namespace cvlib
 {
@@ -88,9 +89,26 @@ class corner_detector_fast : public cv::Feature2D
         return m_num_point;
     }
 
+    void copyVector()
+    {
+        for (auto it = circle_points.begin(); it != circle_points.end(); it++)
+            cyclic_buffer.push_back(*it);
+
+        for (auto it = circle_points.begin(); it != circle_points.begin() + 11; it++)
+            cyclic_buffer.push_back(*it);
+    }
+
     private:
-    int m_threshold;
-    int m_num_point;
+    int m_threshold; // порог
+    int m_num_point; // число найденых точек
+
+    // смещение индексов для поиска точек
+    //                  1    2   3   4  5  6  7  8  9  10 11 12 13 14  15  16
+    int offset_i[16] = {-3, -3, -2, -1, 0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3};
+    int offset_j[16] = {0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1};
+
+    std::vector<int> circle_points;
+    std::vector<int> cyclic_buffer;
 };
 } // namespace cvlib
 
