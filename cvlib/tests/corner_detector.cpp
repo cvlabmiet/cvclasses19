@@ -23,13 +23,13 @@ TEST_CASE("simple check", "[corner_detector_fast]")
         REQUIRE(out.empty());
     }
 
-    cv::Mat small_image = (cv::Mat_<char>(7, 7) << 0, 0, 0, 0, 0, 0, 0,
-												   0, 0, 0, 0, 0, 0, 0,
-												   0, 0, 0, 0, 0, 0, 0,
-												   0, 0, 0, 99, 99, 99, 99,
-												   0, 0, 0, 99, 99, 99, 99,
-												   0, 0, 0, 0, 99, 99, 99,
-												   0, 0, 0, 0, 0, 99, 99);
+    cv::Mat small_image = (cv::Mat_<char>(7, 7) << 0, 0, 0,  0,  0,  0,  0,
+												   0, 0, 0,  0,  0,  0,  0,
+												   0, 0, 0,  0,  0,  0,  0,
+												   0, 0, 0, 99, 99, 99, 98,
+												   0, 0, 0, 99, 99, 99, 97,
+												   0, 0, 0,  0, 99, 96, 99,
+												   0, 0, 0,  0,  0, 99, 99);
 	SECTION("one keypoint")
     {
         std::vector<cv::KeyPoint> out;
