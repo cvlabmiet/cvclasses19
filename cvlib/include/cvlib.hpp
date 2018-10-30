@@ -41,8 +41,7 @@ class motion_segmentation : public cv::BackgroundSubtractor
     public:
     /// \brief ctor
 
-	motion_segmentation(unsigned int frames_for_init):is_initialized_(false),
-		frames_for_init_(frames_for_init), current_frame_(0) {};
+	motion_segmentation():is_initialized_(false), current_frame_(0) {};
 
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = 0.05) override;
@@ -66,12 +65,8 @@ class motion_segmentation : public cv::BackgroundSubtractor
     cv::Mat bg_model_;
 	cv::Mat variance_;
 	double var_threshold_;
-	unsigned int frames_for_init_;
 	unsigned int current_frame_;
 	bool is_initialized_;
-
-    private:
-    cv::Mat bg_model_;
 };
 
 /// \brief FAST corner detection algorithm

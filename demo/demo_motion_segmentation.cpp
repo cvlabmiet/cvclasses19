@@ -7,13 +7,23 @@
 #include <cvlib.hpp>
 #include <opencv2/opencv.hpp>
 
+namespace
+{
+void trackbar_callback_func(int threshold, void* obj)
+{
+	cvlib::motion_segmentation* detector = (cvlib::motion_segmentation*)obj;
+	detector->setVarThreshold(threshold);
+}
+}; // namespace
+
+
 int demo_motion_segmentation(int argc, char* argv[])
 {
     cv::VideoCapture cap(0);
     if (!cap.isOpened())
         return -1;
 
-	cvlib::motion_segmentation* mseg = new cvlib::motion_segmentation(25); // \todo use cvlib::motion_segmentation
+	cvlib::motion_segmentation* mseg = new cvlib::motion_segmentation(); // \todo use cvlib::motion_segmentation
     const auto main_wnd = "main";
     const auto demo_wnd = "demo";
 
@@ -21,22 +31,13 @@ int demo_motion_segmentation(int argc, char* argv[])
 	int alpha = 25;
     cv::namedWindow(main_wnd);
     cv::namedWindow(demo_wnd);
-    cv::createTrackbar("thresh", demo_wnd, &threshold, 255);
+
+    cv::createTrackbar("thresh", demo_wnd, &threshold, 255, trackbar_callback_func, (void*)mseg);
 	cv::createTrackbar("alpha", demo_wnd, &alpha, 100);
     cv::Mat frame;
 	cv::Mat frame_gray;
-	
-    auto mseg = cv::createBackgroundSubtractorMOG2(); // \todo use cvlib::motion_segmentation
-    const auto main_wnd = "main";
-    const auto demo_wnd = "demo";
-
-    int threshold = 50;
-    cv::namedWindow(main_wnd);
-    cv::namedWindow(demo_wnd);
-    cv::createTrackbar("th", demo_wnd, &threshold, 255);
-
-    cv::Mat frame;
     cv::Mat frame_mseg;
+
     while (cv::waitKey(30) != 27) // ESC
     {
         cap >> frame;

@@ -43,7 +43,7 @@ void motion_segmentation::apply(cv::InputArray _image, cv::OutputArray _fgmask, 
 	cv::absdiff(image, bg_model_, diff);
 	cv::accumulateWeighted(image, bg_model_, leaning_rate);
 
-	if (current_frame_ == frames_for_init_)
+	if (current_frame_ == 2)
 	{
 		is_initialized_ = true;
 	}
