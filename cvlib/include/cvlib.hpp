@@ -7,8 +7,19 @@
 #ifndef __CVLIB_HPP__
 #define __CVLIB_HPP__
 
+#include <array>
+#include <vector>
 #include <opencv2/opencv.hpp>
 
+namespace
+{
+	enum brightness_check_result
+	{
+		darker = -1,
+	    similar,
+		brighter
+	};
+}; //namespace
 namespace cvlib
 {
 /// \brief Split and merge algorithm for image segmentation
@@ -29,6 +40,7 @@ class motion_segmentation : public cv::BackgroundSubtractor
 {
     public:
     /// \brief ctor
+
 	motion_segmentation(unsigned int frames_for_init):is_initialized_(false),
 		frames_for_init_(frames_for_init), current_frame_(0) {};
 
@@ -40,6 +52,7 @@ class motion_segmentation : public cv::BackgroundSubtractor
     {
         backgroundImage.assign(bg_model_);
     }
+
 	/// \brief check for background initialization
 	bool isinitialized() const
 	{
@@ -56,6 +69,32 @@ class motion_segmentation : public cv::BackgroundSubtractor
 	unsigned int frames_for_init_;
 	unsigned int current_frame_;
 	bool is_initialized_;
+
+    private:
+    cv::Mat bg_model_;
+};
+
+/// \brief FAST corner detection algorithm
+class corner_detector_fast : public cv::Feature2D
+{
+    public:
+    /// \brief Fabrique method for creating FAST detector
+    static cv::Ptr<corner_detector_fast> create();
+
+    /// \see Feature2d::detect
+    virtual void detect(cv::InputArray image, CV_OUT std::vector<cv::KeyPoint>& keypoints, cv::InputArray mask = cv::noArray()) override;
+	void set_threshold(int thresh);
+
+	private:
+	brightness_check_result check_brightness(unsigned int circle_point_num, cv::Point center);
+	bool is_keypoint(cv::Point center, unsigned int step, unsigned int num);
+
+	const cv::Point circle_template_[16] = { cv::Point(0, -3), cv::Point(1, -3),  cv::Point(2, -2),  cv::Point(3, -1),
+											 cv::Point(3, 0),  cv::Point(3, 1),   cv::Point(2, 2),   cv::Point(1, 3),
+			                                 cv::Point(0, 3),  cv::Point(-1, 3),  cv::Point(-2, 2),  cv::Point(-3, 1),
+			                                 cv::Point(-3, 0), cv::Point(-3, -1), cv::Point(-2, -2), cv::Point(-1, -3) };
+	int threshold_;
+	cv::Mat image_;
 };
 } // namespace cvlib
 
