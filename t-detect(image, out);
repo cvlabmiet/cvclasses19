@@ -1,0 +1,110 @@
+[1mdiff --git a/cvlib/tests/corner_detector.cpp b/cvlib/tests/corner_detector.cpp[m
+[1mindex 660b593..92e1c69 100644[m
+[1m--- a/cvlib/tests/corner_detector.cpp[m
+[1m+++ b/cvlib/tests/corner_detector.cpp[m
+[36m@@ -12,14 +12,96 @@[m [musing namespace cvlib;[m
+ [m
+ TEST_CASE("simple check", "[corner_detector_fast]")[m
+ {[m
+[31m-    auto fast = corner_detector_fast::create();[m
+[31m-    cv::Mat image(10, 10, CV_8UC1);[m
+[31m-    SECTION("empty image")[m
+[31m-    {[m
+[31m-        std::vector<cv::KeyPoint> out;[m
+[31m-        fast->detect(image, out);[m
+[31m-        REQUIRE(out.empty());[m
+[31m-    }[m
+[32m+[m	[32mauto fast = corner_detector_fast::create();[m
+[32m+[m	[32mcv::Mat image(10, 10, CV_8UC1);[m
+[32m+[m	[32mSECTION("empty image")[m
+[32m+[m	[32m{[m
+[32m+[m		[32mstd::vector<cv::KeyPoint> out;[m
+[32m+[m		[32mfast->detect(image, out);[m
+[32m+[m		[32mREQUIRE(out.empty());[m
+[32m+[m	[32m}[m
+ [m
+[31m-    // \todo add 5 or more tests (SECTIONs)[m
+[32m+[m	[32mSECTION("uniform image")[m
+[32m+[m	[32m{[m
+[32m+[m		[32mcv::Mat image(10, 10, CV_8UC1, cv::Scalar(127));[m
+[32m+[m		[32mstd::vector<cv::KeyPoint> out;[m
+[32m+[m		[32mfast->detect(image, out);[m
+[32m+[m		[32mREQUIRE(out.empty());[m
+[32m+[m	[32m}[m
+ }[m
+[32m+[m
+[32m+[m[32mTEST_CASE("complex check", "[corner_detector_fast]")[m
+[32m+[m[32m{[m
+[32m+[m	[32mauto fast = corner_detector_fast::create();[m
+[32m+[m	[32mstd::vector<cv::KeyPoint> out;[m
+[32m+[m
+[32m+[m	[32mSECTION("point")[m
+[32m+[m	[32m{[m
+[32m+[m		[32mcv::Mat image = (cv::Mat_<uint8_t>(9, 9) <<[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 3, 2, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 4, 3, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 3, 0, 80, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 5, 0, 0, 0, 3, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 5, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0);[m
+[32m+[m
+[32m+[m		[32mfast->detect(image, out);[m
+[32m+[m		[32mREQUIRE(1 == out.size());[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mSECTION("two points")[m
+[32m+[m	[32m{[m
+[32m+[m		[32mcv::Mat image = (cv::Mat_<uint8_t>(9, 9) <<[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 2, 2, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 5, 1, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 2, 123, 77, 9, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 6, 0, 0, 0, 4, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 4, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0);[m
+[32m+[m
+[32m+[m		[32mfast->detect(image, out);[m
+[32m+[m		[32mREQUIRE(2 == out.size());[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mSECTION("round")[m
+[32m+[m	[32m{[m
+[32m+[m		[32mcv::Mat image = (cv::Mat_<uint8_t>(9, 9) <<[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 65, 0, 5, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 65, 0, 0, 0, 10, 0, 0,[m
+[32m+[m			[32m0, 65, 0, 0, 0, 0, 0, 15, 0,[m
+[32m+[m			[32m0, 60, 0, 0, 88, 0, 0, 12, 0,[m
+[32m+[m			[32m0, 55, 0, 0, 0, 0, 0, 25, 0,[m
+[32m+[m			[32m0, 0, 50, 0, 0, 0, 30, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 45, 32, 35, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0);[m
+[32m+[m
+[32m+[m		[32mfast->detect(image, out);[m
+[32m+[m		[32mREQUIRE(1 == out.size());[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m	[32mSECTION("corner")[m
+[32m+[m	[32m{[m
+[32m+[m		[32mcv::Mat image = (cv::Mat_<uint8_t>(9, 9) <<[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 0, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 0, 44, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 0, 127, 3, 0, 0, 0,[m
+[32m+[m			[32m0, 0, 0, 34, 30, 56, 7, 0, 0,[m
+[32m+[m			[32m0, 0, 95, 100, 122, 13, 21, 0, 0,[m
+[32m+[m			[32m3, 90, 63, 2, 7, 55, 80, 80, 5,[m
+[32m+[m			[32m12, 54, 67, 198, 34, 165, 247, 9, 55);[m
+[32m+[m
+[32m+[m		[32mfast->detect(image, out);[m
+[32m+[m		[32mREQUIRE(1 == out.size());[m
+[32m+[m	[32m}[m
+[32m+[m[32m}[m
+[41m+	[m
+[41m+[m
