@@ -4,34 +4,53 @@
  * @author Anonymous
  */
 
-#include <cvlib.hpp>
 #include <opencv2/opencv.hpp>
+
+int demo_split_and_merge(int argc, char* argv[]); // lab 1
+int demo_select_texture(int argc, char* argv[]); // lab 2
+int demo_motion_segmentation(int argc, char* argv[]); // lab 3
+int demo_corner_detector(int argc, char* argv[]); // lab 4
 
 int main(int argc, char* argv[])
 {
-    cv::VideoCapture cap(0);
-    if (!cap.isOpened())
-        return -1;
+    cv::namedWindow("main");
+    cv::Mat help = cv::Mat::zeros(300, 500, CV_8UC3);
 
-    cv::Mat frame;
-    cv::Mat frame_gray;
+    // clang-format off
+    auto putText = [help, x = 30](const std::string& text) mutable {
+        cv::putText(help, text, cvPoint(30, x), cv::FONT_HERSHEY_PLAIN, 1, cvScalar(0, 255, 0), 1, CV_AA);
+        x += 20;
+    };
+    // clang-format on
 
-    const auto origin_wnd = "origin";
-    const auto demo_wnd = "demo";
+    putText("Press ESC to exit");
+    putText("Press 1 for Lab 1 Demo (split and merge)");
+    putText("Press 2 for Lab 2 Demo (texture segmentation)");
+    putText("Press 3 for Lab 3 Demo (motion segmentation)");
+    putText("Press 4 for Lab 4 Demo (corner detector)");
 
-    int stddev = 50;
-    cv::namedWindow(demo_wnd, 1);
-    // \todo choose reasonable max value
-    cv::createTrackbar("stdev", demo_wnd, &stddev, 255);
+    cv::imshow("main", help);
 
-    while (cv::waitKey(30) != 27) // ESC
+    while (true)
     {
-        cap >> frame;
+        int key = cv::waitKey(0);
 
-        cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
-        cv::imshow(origin_wnd, frame);
-        cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev));
+        switch (key)
+        {
+            case '1':
+                demo_split_and_merge(argc, argv);
+                break;
+            case '2':
+                demo_select_texture(argc, argv);
+                break;
+            case '3':
+                demo_motion_segmentation(argc, argv);
+                break;
+            case '4':
+                demo_corner_detector(argc, argv);
+                break;
+            case 27: // ESC
+                return 0;
+        }
     }
-
-    return 0;
 }
