@@ -15,7 +15,7 @@ int demo_corner_detector(int argc, char* argv[])
     if (!cap.isOpened())
         return -1;
 
-    const auto main_wnd = "main";
+    const auto main_wnd = "orig";
     const auto demo_wnd = "demo";
 
     cv::namedWindow(main_wnd);
