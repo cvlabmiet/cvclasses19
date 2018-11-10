@@ -14,7 +14,7 @@ struct descriptor : public std::vector<double>
     descriptor operator-(const descriptor& right) const
     {
         descriptor temp = *this;
-        for (int i = 0; i < temp.size(); ++i)
+        for (size_t i = 0; i < temp.size(); ++i)
         {
             temp[i] -= right[i];
         }
