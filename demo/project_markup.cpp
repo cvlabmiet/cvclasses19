@@ -1,8 +1,8 @@
 /* Demo application for Computer Vision Library.
-* @file
-* @date 2018-11-05
-* @author Anonymous
-*/
+ * @file
+ * @date 2018-11-05
+ * @author Anonymous
+ */
 
 #include <opencv2/opencv.hpp>
 
@@ -10,45 +10,54 @@
 
 int project_markup(int argc, char* argv[])
 {
-   const cv::String keys =
+    const cv::String keys = // clang-format off
       "{help h usage ? |      | print this message   }"
       "{video          |      | video file           }";
-   cv::CommandLineParser parser(argc, argv, keys);
-   parser.about("Application name v1.0.0");
-   if (parser.has("help"))
-   {
-      parser.printMessage();
-      return 0;
-   }
+    // clang-format on
+    cv::CommandLineParser parser(argc, argv, keys);
+    parser.about("Application name v1.0.0");
+    if (parser.has("help"))
+    {
+        parser.printMessage();
+        return 0;
+    }
 
-   cv::VideoCapture cap(parser.get<cv::String>("video"));
-   if (!cap.isOpened())
-      return -1;
+    auto video = parser.get<cv::String>("video");
+    cv::VideoCapture cap(video);
+    if (!cap.isOpened())
+        return -1;
 
-   cv::Mat frame;
+    cv::Mat frame;
+    std::ofstream out(video + ".txt");
+    if (!out.is_open())
+        return -1;
 
-   const auto origin_wnd = "origin";
+    const auto origin_wnd = "origin";
 
-   cv::namedWindow(origin_wnd, 1);
-   while (true) // ESC
-   {
-      cap >> frame;
-      cv::imshow(origin_wnd, frame);
-      std::cout << cap.get(CV_CAP_PROP_FRAME_COUNT) << "\r";
+    cv::namedWindow(origin_wnd, 1);
+    while (true) // ESC
+    {
+        cap >> frame;
+        if (frame.empty())
+            break;
 
-      switch (cv::waitKey(30))
-      {
-      case 27:
-         return 0;
-      case ' ':
-         std::cout << cap.get(CV_CAP_PROP_FRAME_COUNT) << "\n";
-         break;
-      default:
-         break;
-      }
-   }
+        cv::line(frame, cv::Point(frame.cols / 2, 0), cv::Point(frame.cols / 2, frame.rows), cv::Scalar(0, 0, 255), 2, 8);
+        cv::imshow(origin_wnd, frame);
 
-   cv::destroyWindow(origin_wnd);
+        switch (cv::waitKey(30))
+        {
+            case 27:
+                cv::destroyWindow(origin_wnd);
+                return 0;
+            case ' ':
+                out << cap.get(cv::CAP_PROP_POS_MSEC) << "\r\n";
+                break;
+            default:
+                break;
+        }
+    }
 
-   return 0;
+    cv::destroyWindow(origin_wnd);
+
+    return 0;
 }
