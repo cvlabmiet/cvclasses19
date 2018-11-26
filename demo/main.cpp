@@ -6,10 +6,12 @@
 
 #include <opencv2/opencv.hpp>
 
+int project_markup(int argc, char* argv[]); // markup_application
 int demo_split_and_merge(int argc, char* argv[]); // lab 1
 int demo_select_texture(int argc, char* argv[]); // lab 2
 int demo_motion_segmentation(int argc, char* argv[]); // lab 3
 int demo_corner_detector(int argc, char* argv[]); // lab 4
+int demo_feature_descriptor(int argc, char* argv[]); // lab 5
 
 int main(int argc, char* argv[])
 {
@@ -28,6 +30,9 @@ int main(int argc, char* argv[])
     putText("Press 2 for Lab 2 Demo (texture segmentation)");
     putText("Press 3 for Lab 3 Demo (motion segmentation)");
     putText("Press 4 for Lab 4 Demo (corner detector)");
+    putText("Press 5 for Lab 5 Demo (feature descriptor)");
+    putText("--------------------------------------------");
+    putText("Press M for markup video file (course project tool)");
 
     cv::imshow("main", help);
 
@@ -48,6 +53,13 @@ int main(int argc, char* argv[])
                 break;
             case '4':
                 demo_corner_detector(argc, argv);
+                break;
+            case '5':
+                demo_feature_descriptor(argc, argv);
+                break;
+            case 'M':
+            case 'm':
+                project_markup(argc, argv);
                 break;
             case 27: // ESC
                 return 0;
