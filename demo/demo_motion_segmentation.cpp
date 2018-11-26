@@ -14,7 +14,7 @@ int demo_motion_segmentation(int argc, char* argv[])
     if (!cap.isOpened())
         return -1;
 
-    auto mseg = cv::createBackgroundSubtractorMOG2(); // \todo use cvlib::motion_segmentation
+    auto mseg = cvlib::motion_segmentation();
     const auto main_wnd = "orig";
     const auto demo_wnd = "demo";
 
