@@ -28,7 +28,6 @@ Course consist of
 
 [2018 plan](https://docs.google.com/spreadsheets/d/e/2PACX-1vQED4IwdOIDpr_h6e-k1BKvmH_Xq2l4FGPDfiJa8EPCVm5a7nWc1S1EMpOC5FbutaKBmVkuWzSLPiC8/pubhtml?gid=1805943559&single=true)
 
-
 ## Repository Overview
 
 The structure of repository is described below:
