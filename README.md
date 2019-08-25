@@ -1,17 +1,17 @@
 ![MIET](https://avatars0.githubusercontent.com/u/20048671?s=80)
 
-# Computer Vision Classes 2018
+# Computer Vision Classes 2019
 
-[![Build Status](https://travis-ci.com/cvlabmiet/cvclasses18.svg?token=1UuLW4uB9cpzqjJxqHst&branch=master)](https://travis-ci.com/cvlabmiet/cvclasses18)
+[![Build Status](https://travis-ci.com/cvlabmiet/cvclasses19.svg?token=1UuLW4uB9cpzqjJxqHst&branch=master)](https://travis-ci.com/cvlabmiet/cvclasses19)
 
 ## Overview
 
 This is a Computer Vision classes prepared for the 2nd-year M.D. students.
 Course includes topics covering basic areas of computer vision.
 It takes 16 seminars-discussion lessons and 8 practical lessons.
-Most practical lessons will be based on using of the OpenCV v3.2 library.
+Most practical lessons will be based on using of the latest [OpenCV](https://github.com/opencv/opencv) library.
 All materials and tasks will be hosted in this repository and available for all students.
-All program code is written using c++14.
+All program code is written using c++17.
 
 ## Required Knowledge
 
@@ -26,7 +26,7 @@ Course consist of
 * 26 seminars/practical lessons.
 * 7 individual programming tasks.
 
-[2018 plan](https://docs.google.com/spreadsheets/d/e/2PACX-1vQED4IwdOIDpr_h6e-k1BKvmH_Xq2l4FGPDfiJa8EPCVm5a7nWc1S1EMpOC5FbutaKBmVkuWzSLPiC8/pubhtml?gid=1805943559&single=true)
+[2019 plan](https://docs.google.com/spreadsheets/d/e/2PACX-1vQED4IwdOIDpr_h6e-k1BKvmH_Xq2l4FGPDfiJa8EPCVm5a7nWc1S1EMpOC5FbutaKBmVkuWzSLPiC8/pubhtml?gid=319680911&single=true)
 
 ## Repository Overview
 
@@ -47,8 +47,8 @@ The structure of repository is described below:
 Please ensure you have following instruments and settings to start the work:
 * [Git](https://git-scm.com/)
 * [CMake >=3.9](https://cmake.org/)
-* [OpenCV 3.2](http://opencv.org/downloads.html)
-* gcc>=7.3 / Visual Studio 14 2015 Win64
+* [OpenCV latest](http://opencv.org/downloads.html)
+* gcc>=7.3 / Visual Studio 15 2017 Win64
 * Camera to execute demo applications
 
 ## Build Steps
@@ -95,23 +95,22 @@ build/ $ ./demo/cvlib_demo
 ### Windows
 
 Prerequesties:
-1. Install latest CMake 3.9.2 x64
-2. Download and unpack binaries of OpenCV 3.2 vc14.
+1. Install latest [CMake x64](https://cmake.org)
+2. Download and unpack binaries of OpenCV.
 3. Add system environment variables, example:
     ```
     OPENCV_DIR="C:\Users\roman\Downloads\opencv\build"
-    PATH+="%OPENCV_DIR%\build\x64\vc14\bin"
+    PATH="%PATH%;%OPENCV_DIR%\x64\vc15\bin"
     ```
 
-4. Install Visual Studio 2015 or 2017.
-    If you use Visual Studio 2017 then Build Tools 2015 shall be installed.
+4. Install Visual Studio 2017.
 
 #### Build
 Stay in root folder of the repository:
 
 ```sh
 $ mkdir build && cd build
-build/ $ cmake .. -G "Visual Studio 14 2015 Win64"
+build/ $ cmake .. -G "Visual Studio 15 2017 Win64"
 build/ $ cmake --build . --config Release
 ```
 
