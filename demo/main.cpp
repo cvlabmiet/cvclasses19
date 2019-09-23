@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
     // clang-format off
     auto putText = [help, x = 30](const std::string& text) mutable {
-        cv::putText(help, text, cvPoint(30, x), cv::FONT_HERSHEY_PLAIN, 1, cvScalar(0, 255, 0), 1, CV_AA);
+        cv::putText(help, text, cv::Point(30, x), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
         x += 20;
     };
     // clang-format on

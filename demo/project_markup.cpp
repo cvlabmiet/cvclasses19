@@ -3,7 +3,7 @@
  * @date 2018-11-05
  * @author Anonymous
  */
-
+#include <fstream>
 #include <opencv2/opencv.hpp>
 
 #include <cvlib.hpp>

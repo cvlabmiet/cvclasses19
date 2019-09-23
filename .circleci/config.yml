@@ -1,0 +1,12 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: spacev/ml:latest
+    steps:
+      - checkout
+      - run: mkdir build
+      - run: cd build && cmake ..
+      - run: cd build && make
+      - run: cd build && ctest
