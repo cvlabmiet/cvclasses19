@@ -59,7 +59,7 @@ double fps_counter::process_new_frame()
 
 void put_fps_text(cv::Mat& image, fps_counter& fps, cv::Scalar color /*= (255, 0, 0)*/)
 {
-    const auto txtFont = CV_FONT_HERSHEY_SIMPLEX;
+    const auto txtFont = cv::FONT_HERSHEY_SIMPLEX;
     const auto fontScale = 0.5;
     const auto thickness = 1;
     static const cv::Size textSize = cv::getTextSize("fps: 19.127", txtFont, fontScale, thickness, nullptr);

@@ -2,7 +2,7 @@
 
 # Computer Vision Classes 2019
 
-[![Build Status](https://travis-ci.com/cvlabmiet/cvclasses19.svg?token=1UuLW4uB9cpzqjJxqHst&branch=master)](https://travis-ci.com/cvlabmiet/cvclasses19)
+[![CircleCI](https://circleci.com/gh/cvlabmiet/cvclasses19/tree/master.svg?style=svg)](https://circleci.com/gh/cvlabmiet/cvclasses19/tree/master)
 
 ## Overview
 

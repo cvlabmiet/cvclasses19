@@ -10,13 +10,6 @@
 
 using namespace cvlib;
 
-TEST_CASE("empty image", "[split_and_merge]")
-{
-    cv::Mat image;
-    auto res = split_and_merge(image, 1);
-    REQUIRE(res.empty());
-}
-
 TEST_CASE("constant image", "[split_and_merge]")
 {
     const cv::Mat image(100, 100, CV_8UC1, cv::Scalar{15});
