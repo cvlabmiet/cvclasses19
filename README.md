@@ -65,6 +65,7 @@ Prerequesties:
 ```sh
 $ sudo apt install gcc-7
 $ sudo apt install libopencv-dev
+$ sudo apt install clang-format
 ```
 
 #### Build
