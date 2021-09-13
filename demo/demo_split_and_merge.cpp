@@ -28,7 +28,7 @@ int demo_split_and_merge(int argc, char* argv[])
     while (cv::waitKey(30) != 27) // ESC
     {
         cap >> frame;
-
+		cv::resize(frame,frame,cv::Size(480,320));
         cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
         cv::imshow(origin_wnd, frame);
         cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev));
