@@ -87,16 +87,16 @@ void calculateFeatureMaps(const cv::Mat& image)
 
 void calculateFilters(int kernel_size)
 {
-    // \todo implement complete texture segmentation based on Gabor filters
-    // (find good combinations for all Gabor's parameters)
     filter_kernels.clear();
-    const double lm = 10.0;
-    const double gm = 0.5;
-    const double step_sig = kernel_size/12 == 0 ? 1 : kernel_size/12; 
-    //for(auto lm = 5.0; lm <= 15.0; lm += 3)
-        for (auto th = CV_PI /4; th <= CV_PI; th += CV_PI /4)
-            for (auto sig = step_sig; sig <= 3*step_sig; sig += step_sig)
-                filter_kernels.push_back(cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th, lm, gm));
+    const std::vector<double> lambda_vec = {1/6.*kernel_size, 1/3.*kernel_size, 1/1.*kernel_size};
+    const std::vector<double> gamma_vec = {0.5};
+    const std::vector<double> sigma_vec = {1/12.*kernel_size, 1/9.*kernel_size, 1/6.*kernel_size};
+    const std::vector<double> theta_vec = {0, CV_PI/4, CV_PI/2, 3*CV_PI/4};
+    for (auto& th : theta_vec)
+        for(auto& lm : lambda_vec)
+            for (auto& sig : sigma_vec)
+                for( auto& gm : gamma_vec)
+                    filter_kernels.push_back(cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th, lm, gm));
 }
 
 } // namespace
@@ -106,6 +106,7 @@ namespace cvlib
 cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps)
 {
     double num = static_cast<double>(std::min(roi.height, roi.width)) / 2.0;
+    num = num > 31 ? 31 : num;
     const int kernel_size = std::floor(num) / 2 != 0 ? std::floor(num) : std::ceil(num);
     static int prev_kernel_size;
     if(prev_kernel_size != kernel_size) 
