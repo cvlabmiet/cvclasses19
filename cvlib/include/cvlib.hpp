@@ -29,19 +29,26 @@ class motion_segmentation : public cv::BackgroundSubtractor
 {
     public:
     /// \brief ctor
-    motion_segmentation();
+    motion_segmentation(){};
 
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = -1) override;
 
     /// \see cv::BackgroundSubtractor::BackgroundSubtractor
-    void getBackgroundImage(cv::OutputArray backgroundImage) const override
-    {
-        backgroundImage.assign(bg_model_);
-    }
+    void getBackgroundImage(cv::OutputArray  &backgroundImage) const override {};
 
+    void getBackgroundImage(cv::Mat &backgroundImage);
+    void setVarThreshold(double varThreshold);
+
+    void updateBackground(cv::Mat image);
     private:
-    cv::Mat bg_model_;
+    cv::Mat m_value,d_value;
+    bool meanlogic = true;
+    int max_size = 15;
+    std::vector<cv::Mat> memmory;
+    double thresh;
+    double p = 0.05;
+    double k = 2.5;
 };
 
 /// \brief FAST corner detection algorithm
