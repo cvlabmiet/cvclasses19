@@ -47,25 +47,38 @@ int demo_select_texture(int argc, char* argv[])
     cv::namedWindow(data.wnd);
     cv::namedWindow(demo_wnd);
     // \todo choose reasonable max value
-    cv::createTrackbar("eps", demo_wnd, &eps, 200);
+    cv::createTrackbar("eps", demo_wnd, &eps, 400);
 
     cv::setMouseCallback(data.wnd, mouse, &data);
-
+    int start, end;
+    float dur;
     cv::Mat frame_gray;
+
     while (cv::waitKey(30) != 27) // ESC
     {
         cap >> data.image;
+        cv::resize(data.image, data.image, cv::Size(480, 320));
 
         cv::cvtColor(data.image, frame_gray, cv::COLOR_BGR2GRAY);
+        frame_gray.convertTo(frame_gray, CV_32FC1);
+
         const cv::Rect roi = {data.tl, data.br};
+       
         if (roi.area())
-        {
+        {   
             const auto mask = cvlib::select_texture(frame_gray, roi, eps);
             const auto segmented = mask.clone();
+            frame_gray.convertTo(frame_gray, CV_8UC1);
             frame_gray.copyTo(segmented, mask);
             cv::imshow(demo_wnd, segmented);
             cv::rectangle(data.image, data.tl, data.br, cv::Scalar(0, 0, 255));
         }
+        
+        end = clock();
+        dur = static_cast<float>((end - start))/CLOCKS_PER_SEC;
+        start = clock();
+        putText(data.image, std::string("fps: ") + std::to_string(static_cast<int>(1/dur)), cv::Point(5,50), cv::FONT_HERSHEY_DUPLEX, 1, cv::Scalar(0), 2);
+        
         cv::imshow(data.wnd, data.image);
     }
 

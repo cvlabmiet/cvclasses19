@@ -12,4 +12,4 @@ add_executable(${PROJECT_NAME} ${SRC})
 target_link_libraries(${PROJECT_NAME} cvlib ${OpenCV_LIBS})
 
 file(GLOB_RECURSE CHECK_FILES *.cpp *.hpp)
-check_files_style(${PROJECT_NAME} ${CHECK_FILES})
+#check_files_style(${PROJECT_NAME} ${CHECK_FILES})

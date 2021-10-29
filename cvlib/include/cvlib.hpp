@@ -14,8 +14,9 @@ namespace cvlib
 /// \brief Split and merge algorithm for image segmentation
 /// \param image, in - input image
 /// \param stddev, in - threshold to treat regions as homogeneous
+/// \param mean, in - threshhold to merge regions
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev);
+cv::Mat split_and_merge(const cv::Mat& image, double stddev, int mean=0);
 
 /// \brief Segment texuture on passed image according to sample in ROI
 /// \param image, in - input image
