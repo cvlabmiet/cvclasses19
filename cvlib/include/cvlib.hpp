@@ -16,7 +16,7 @@ namespace cvlib
 /// \param stddev, in - threshold to treat regions as homogeneous
 /// \param mean, in - threshhold to merge regions
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev, int mean=0);
+cv::Mat split_and_merge(const cv::Mat& image, double stddev, int mean = 0);
 
 /// \brief Segment texuture on passed image according to sample in ROI
 /// \param image, in - input image
@@ -25,6 +25,7 @@ cv::Mat split_and_merge(const cv::Mat& image, double stddev, int mean=0);
 /// \return binary mask with selected texture
 cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps);
 
+enum BSmethod{ Mean, G1};
 /// \brief Motion Segmentation algorithm
 class motion_segmentation : public cv::BackgroundSubtractor
 {
@@ -41,8 +42,27 @@ class motion_segmentation : public cv::BackgroundSubtractor
         backgroundImage.assign(bg_model_);
     }
 
-    private:
+    void setVarThreshold(int th)
+    {
+        threshold_m = th;
+        threshold_g = th/50.;
+    }
+
+    void setMethod(BSmethod m);
+
+private:
     cv::Mat bg_model_;
+    int frame_counter = 0;
+    int history_cap = 10;
+    double background_alpha = 0.01;
+    int threshold_m = 0;
+    float threshold_g = 0;
+    BSmethod method = BSmethod::Mean;
+    std::vector<cv::Mat> history; 
+    cv::Mat mu;
+    cv::Mat sigma;
+
+    void updateBackgroundModel(cv::Mat image, cv::Mat mask = cv::Mat());
 };
 
 /// \brief FAST corner detection algorithm
