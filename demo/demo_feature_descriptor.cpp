@@ -34,7 +34,7 @@ int demo_feature_descriptor(int argc, char* argv[])
         cap >> frame;
         cv::imshow(main_wnd, frame);
 
-        detector_b->detect(frame, corners); // \todo use your detector (detector_b)
+        detector_a->detect(frame, corners); // \todo use your detector (detector_b)
         cv::drawKeypoints(frame, corners, frame, cv::Scalar(0, 0, 255));
 
         utils::put_fps_text(frame, fps);

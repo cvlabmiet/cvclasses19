@@ -51,4 +51,3 @@ target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS})
 
 ParseAndAddCatchTests(${PROJECT_NAME}_tests)
 file(GLOB_RECURSE CHECK_FILES *.cpp)
-check_files_style(${PROJECT_NAME} ${CHECK_FILES})
