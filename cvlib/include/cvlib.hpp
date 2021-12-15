@@ -45,9 +45,45 @@ class motion_segmentation : public cv::BackgroundSubtractor
     cv::Mat bg_model_;
 };
 
+union pixel_circle_mask
+{
+    uint16_t mask = 0;
+    struct // p1 = 1 if abs(I(1) - I(0)) > threshold
+    {
+        uint16_t p1  :1;
+        uint16_t p2  :1;
+        uint16_t p3  :1;
+        uint16_t p4  :1;
+        uint16_t p5  :1;
+        uint16_t p6  :1;
+        uint16_t p7  :1;
+        uint16_t p8  :1;
+        uint16_t p9  :1;
+        uint16_t p10 :1;
+        uint16_t p11 :1;
+        uint16_t p12 :1;
+        uint16_t p13 :1;
+        uint16_t p14 :1;
+        uint16_t p15 :1;
+        uint16_t p16 :1;
+    };
+};
 /// \brief FAST corner detection algorithm
 class corner_detector_fast : public cv::Feature2D
 {
+    pixel_circle_mask pix_mask;
+    int16_t threshold = 20;
+    int8_t circle_pix_x[16] = {0, 1, 2, 3, 3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1};
+    int8_t circle_pix_y[16] = {3, 3, 2, 1, 0, -1, -2, -3, -3, -3, -2, -1, 0, 1, 2, 3};
+    uint8_t stride = 3;
+    uint16_t mask_p1_5_9 = 1 + 16 + 256;
+    uint16_t mask_p1_5_13 = 1 + 16 + 4096;
+    uint16_t mask_p1_9_13 = 1 + 256 + 4096;
+    uint16_t mask_p5_9_13 = 16 + 256 + 4096;
+    cv::Mat img;
+
+    void fill_full_mask(int row, int col);
+
     public:
     /// \brief Fabrique method for creating FAST detector
     static cv::Ptr<corner_detector_fast> create();
