@@ -9,7 +9,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} include)
 
 # Library
 file(GLOB SRC src/*.cpp include/*.hpp)
-add_library(${PROJECT_NAME} ${SRC})
+add_library(${PROJECT_NAME} ${SRC} src/stitcher.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 

@@ -14,10 +14,6 @@ void descriptor_matcher::knnMatchImpl(cv::InputArray queryDescriptors, std::vect
     if (trainDescCollection.empty())
         return;
 
-//    auto q_desc = queryDescriptors.getMat();
-//    auto& t_desc = trainDescCollection[0];
-//
-//    matches.resize(q_desc.rows);
 
     for(int i=0; i<matches.size();++i)
     {
@@ -40,11 +36,7 @@ void descriptor_matcher::knnMatchImpl(cv::InputArray queryDescriptors, std::vect
         }
 
     }
-//    for (int i = 0; i < q_desc.rows; ++i)
-//    {
-//        // \todo implement Ratio of SSD check.
-////        matches[i].emplace_back(i, rnd.uniform(0, t_desc.rows), FLT_MAX);
-//    }
+
 }
 
 bool myfunction (cv::DMatch i,cv::DMatch j) { return (i.distance<j.distance); }

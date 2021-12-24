@@ -121,9 +121,15 @@ class descriptor_matcher : public cv::DescriptorMatcher
 };
 
 /// \brief Stitcher for merging images into big one
-class Stitcher
+class stitcher
 {
-    /// \todo design and implement
+    public:
+    static cv::Ptr<stitcher> create()
+    {
+        return cv::makePtr<stitcher>();
+    }
+
+    cv::Mat stiched(cv::Mat img1, cv::Mat img2);
 };
 } // namespace cvlib
 

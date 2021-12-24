@@ -151,7 +151,6 @@ void corner_detector_fast::compute(cv::InputArray image, std::vector<cv::KeyPoin
         auto cur_point = _keypoints[i];
         for (int j = 0; j < desc_mat.cols; j++)
         {
-            //std::cout << i << " " << j << std::endl;
             int x = gray.at<unsigned char>(cur_point.pt.x + pairs[j * 2].first, cur_point.pt.y + pairs[j * 2].second);
             int y = gray.at<unsigned char>(cur_point.pt.x + pairs[j * 2 + 1].first, cur_point.pt.y + pairs[j * 2 + 1].second);
             if (x < y)
@@ -161,19 +160,6 @@ void corner_detector_fast::compute(cv::InputArray image, std::vector<cv::KeyPoin
         }
     }
 
-    //    descriptors.create(static_cast<int>(keypoints.size()), desc_length, CV_32S);
-    //    auto desc_mat = descriptors.getMat();
-    //    desc_mat.setTo(0);
-    //
-    //    int* ptr = reinterpret_cast<int*>(desc_mat.ptr());
-    //    for (const auto& pt : keypoints)
-    //    {
-    //        for (int i = 0; i < desc_length; ++i)
-    //        {
-    //            *ptr = std::rand();
-    //            ++ptr;
-    //        }
-    //    }
 }
 
 void corner_detector_fast::detectAndCompute(cv::InputArray image, cv::InputArray masc, std::vector<cv::KeyPoint>& corners, cv::OutputArray descriptors, bool /*= false*/)
