@@ -9,7 +9,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} include)
 
 # Library
 file(GLOB SRC src/*.cpp include/*.hpp)
-add_library(${PROJECT_NAME} ${SRC})
+add_library(${PROJECT_NAME} ${SRC} src/stitcher.cpp)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_include_directories(${PROJECT_NAME} INTERFACE include)
 
@@ -51,4 +51,3 @@ target_link_libraries(${PROJECT_NAME}_tests ${PROJECT_NAME} ${OpenCV_LIBS})
 
 ParseAndAddCatchTests(${PROJECT_NAME}_tests)
 file(GLOB_RECURSE CHECK_FILES *.cpp)
-check_files_style(${PROJECT_NAME} ${CHECK_FILES})
