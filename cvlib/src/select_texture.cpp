@@ -30,6 +30,16 @@ struct descriptor : public std::vector<double>
         }
         return res;
     }
+    double norm_l2() const
+    {
+        double res = 0.0;
+        for (auto v : *this)
+        {
+            res += v * v;
+        }
+        return res;
+    }
+
 };
 
 void calculateDescriptor(const cv::Mat& image, int kernel_size, descriptor& descr)
@@ -37,7 +47,7 @@ void calculateDescriptor(const cv::Mat& image, int kernel_size, descriptor& desc
     descr.clear();
     const double th = CV_PI / 4;
     const double lm = 10.0;
-    const double gm = 0.5;
+    const double gm = 0.75;
     cv::Mat response;
     cv::Mat mean;
     cv::Mat dev;
@@ -61,12 +71,13 @@ cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps)
 {
     cv::Mat imROI = image(roi);
 
-    const int kernel_size = std::min(roi.height, roi.width) / 2; // \todo round to nearest odd
+    const int kernel_size = int(std::min(roi.height, roi.width) / 4) * 2 + 1; // \todo round to nearest odd
 
     descriptor reference;
     calculateDescriptor(image(roi), kernel_size, reference);
 
     cv::Mat res = cv::Mat::zeros(image.size(), CV_8UC1);
+    cv::Mat mask = cv::Mat::zeros(image.size(), CV_8UC1);
 
     descriptor test(reference.size());
     cv::Rect baseROI = roi - roi.tl();
@@ -76,11 +87,19 @@ cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps)
     {
         for (int j = 0; j < image.size().height / roi.height; ++j)
         {
+            if (mask.at<unsigned char>(j, i) == 1)
+                continue;
             auto curROI = baseROI + cv::Point(roi.width * i, roi.height * j);
             calculateDescriptor(image(curROI), kernel_size, test);
 
             // \todo implement and use norm L2
-            res(curROI) = 255 * ((test - reference).norm_l1() <= eps);
+            int f = ((test - reference).norm_l2() <= eps * eps);
+            if (f != 0)
+            {
+                res(curROI) = 255 * f;
+                mask(curROI) = 1;
+                //j += kernel_size - 1;
+            }
         }
     }
 
