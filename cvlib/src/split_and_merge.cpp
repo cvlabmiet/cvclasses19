@@ -10,6 +10,9 @@
 
 namespace
 {
+/* Данная функция в текущем варианте решения не используется
+*  Она написана для дальнейшей реализации более высокоэффективного метода, которым я займусь позднее)
+*/
 void area_by_index(int index, cv::Mat image, cv::Mat roi)
 {
     const auto width = image.cols;
@@ -43,7 +46,9 @@ void area_by_index(int index, cv::Mat image, cv::Mat roi)
 
     roi = image(cv::Range(y, y + h), cv::Range(x, x + w));
 }
-
+/* Данная функция в текущем варианте решения не используется
+ *  Она написана для дальнейшей реализации более высокоэффективного метода, которым я займусь позднее)
+ */
 bool neighbour_indeces(int index1, int index2)
 {
     std::string str1 = std::to_string(index1);
@@ -171,8 +176,8 @@ void merge_image(cv::Mat image, double stddev)
         return; 
     cv::Mat quarter1 = image(cv::Range(0, height / 2), cv::Range(0, width / 2));
     cv::Mat quarter2 = image(cv::Range(0, height / 2), cv::Range(width / 2, width));
-    cv::Mat quarter3 = image(cv::Range(height / 2, height), cv::Range(width / 2, width));
-    cv::Mat quarter4 = image(cv::Range(height / 2, height), cv::Range(0, width / 2));
+    cv::Mat quarter4 = image(cv::Range(height / 2, height), cv::Range(width / 2, width));
+    cv::Mat quarter3 = image(cv::Range(height / 2, height), cv::Range(0, width / 2));
     if (quarter1.empty() || quarter2.empty() || quarter3.empty() || quarter4.empty())
         return; 
     cv::Mat mean1, mean2, mean3, mean4;
