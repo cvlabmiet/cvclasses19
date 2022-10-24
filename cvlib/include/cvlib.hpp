@@ -15,7 +15,7 @@ namespace cvlib
 /// \param image, in - input image
 /// \param stddev, in - threshold to treat regions as homogeneous
 /// \return segmented image
-cv::Mat split_and_merge(const cv::Mat& image, double stddev);
+cv::Mat split_and_merge(const cv::Mat& image, double stddev, int mihWidth, int minHeight);
 
 /// \brief Segment texuture on passed image according to sample in ROI
 /// \param image, in - input image
@@ -25,11 +25,41 @@ cv::Mat split_and_merge(const cv::Mat& image, double stddev);
 cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps);
 
 /// \brief Motion Segmentation algorithm
+
+class gaussProcess
+{
+    public:
+    gaussProcess();
+    gaussProcess(const cv::Mat& Img, const int& img_type, const cv::Size& img_size, const int& std);
+    ~gaussProcess();
+
+    void update_background_mask(int thresh);
+    cv::Mat get_background_mask(void);
+    cv::Mat get_weights(void);
+    cv::Mat check_thresh(int thresh);
+    void set_image(cv::Mat& img);
+    void update_statistics(double alph1, double alph2);
+    void rewrite_statistics(cv::Mat mask, int std);
+    void update_weights(uint8_t curr_K, double alph3, cv::Mat input_mask, bool is_current_process_flag);
+    //void do_classification(cv::Mat& bgmask, cv::Mat weight_mask, double weight_thresh);
+
+    private:
+    cv::Mat _weights;
+    cv::Mat _means;
+    // cv::Mat _std2;
+    cv::Mat _std;
+    cv::Mat _background_mask;
+
+    cv::Size _img_size;
+    int _img_type;
+    cv::Mat _img;
+};
+
 class motion_segmentation : public cv::BackgroundSubtractor
 {
     public:
     /// \brief ctor
-    motion_segmentation();
+    motion_segmentation(int threshold, double alpha1, double alpha2, double alpha3, double weight_thresh, uint8_t K, int init_std);
 
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = -1) override;
@@ -40,8 +70,29 @@ class motion_segmentation : public cv::BackgroundSubtractor
         backgroundImage.assign(bg_model_);
     }
 
+    void setVarThreshold(int threshold);
+
     private:
     cv::Mat bg_model_;
+
+    cv::Mat _fgmask;
+    cv::Mat _bgmask;
+
+    bool _first_frame;
+    cv::Size _img_size;
+    int _img_type;
+
+    uint8_t _max_K;
+    uint8_t _curr_K;
+
+    int _init_std;
+    int _thresh;
+    double _alpha1;
+    double _alpha2;
+    double _alpha3;
+    double _weight_thresh;
+
+    std::map<int, gaussProcess> _models;
 };
 
 /// \brief FAST corner detection algorithm
