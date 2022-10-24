@@ -20,7 +20,7 @@ int demo_split_and_merge(int argc, char* argv[])
     const auto origin_wnd = "origin";
     const auto demo_wnd = "demo";
 
-    int stddev = 50;
+    int stddev = 30;
     cv::namedWindow(demo_wnd, 1);
     // \todo choose reasonable max value
     cv::createTrackbar("stdev", demo_wnd, &stddev, 255);
@@ -31,7 +31,7 @@ int demo_split_and_merge(int argc, char* argv[])
 
         cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
         cv::imshow(origin_wnd, frame);
-        cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev));
+        cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev, 5, 5));
     }
 
     cv::destroyWindow(origin_wnd);
