@@ -45,7 +45,7 @@ struct descriptor : public std::vector<double>
 void calculateDescriptor(const cv::Mat& image, int kernel_size, descriptor& descr)
 {
     descr.clear();
-    const double th = CV_PI / 4;
+    const double th[3] = {0, CV_PI / 4, CV_PI / 2};
     const double lm = 10.0;
     const double gm = 0.75;
     cv::Mat response;
@@ -56,11 +56,14 @@ void calculateDescriptor(const cv::Mat& image, int kernel_size, descriptor& desc
     // (find good combinations for all Gabor's parameters)
     for (auto sig = 5; sig <= 15; sig += 5)
     {
-        cv::Mat kernel = cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th, lm, gm);
-        cv::filter2D(image, response, CV_32F, kernel);
-        cv::meanStdDev(response, mean, dev);
-        descr.emplace_back(mean.at<double>(0));
-        descr.emplace_back(dev.at<double>(0));
+        for (int i = 0; i < 3; i++)
+        {
+            cv::Mat kernel = cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th[2], lm, gm);
+            cv::filter2D(image, response, CV_32F, kernel);
+            cv::meanStdDev(response, mean, dev);
+            descr.emplace_back(mean.at<double>(0));
+            descr.emplace_back(dev.at<double>(0));
+        }
     }
 }
 } // namespace
@@ -83,13 +86,13 @@ cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps)
     cv::Rect baseROI = roi - roi.tl();
 
     // \todo move ROI smoothly pixel-by-pixel
-    for (int i = 0; i < image.size().width / roi.width; ++i)
+    for (int i = 0; i < image.size().width - roi.width; ++i)
     {
-        for (int j = 0; j < image.size().height / roi.height; ++j)
+        for (int j = 0; j < image.size().height - roi.height; ++j)
         {
             if (mask.at<unsigned char>(j, i) == 1)
                 continue;
-            auto curROI = baseROI + cv::Point(roi.width * i, roi.height * j);
+            auto curROI = baseROI + cv::Point(i, j);
             calculateDescriptor(image(curROI), kernel_size, test);
 
             // \todo implement and use norm L2
@@ -98,7 +101,7 @@ cv::Mat select_texture(const cv::Mat& image, const cv::Rect& roi, double eps)
             {
                 res(curROI) = 255 * f;
                 mask(curROI) = 1;
-                //j += kernel_size - 1;
+                j += kernel_size - 1;
             }
         }
     }
