@@ -309,23 +309,27 @@ void merge_image(cv::Mat image, double stddev)
                 std::cout << a.isContinuous() << std::endl;
                 std::cout << a.clone().isContinuous() << std::endl;
                 cv::Mat b;
-                cv::resize(area_i, b, cv::Size(area_i.size[1], area_i.size[2]));
-                std::cout << b.clone().isContinuous() << std::endl;
+                std::cout << area_i.cols << " x " << area_i.rows << std::endl;
+                //cv::resize(area_i, b, cv::Size(area_i.size[1], area_i.size[2]));
+                //std::cout << b.clone().isContinuous() << std::endl;
 
-                std::cout << area_i.clone().reshape(0, 1).size() << std::endl;
-                std::cout << area_j.clone().reshape(0, 1).size() << std::endl;
-                cv::hconcat(area_i.reshape(0, 1), area_j.reshape(0, 1), area_ij);
-
-                cv::meanStdDev(area_i, mean_i, dev_i);
-                cv::meanStdDev(area_j, mean_j, dev_j);
-                cv::meanStdDev(area_ij, mean_ij, dev_ij);
-
-                if (dev_i.at<double>(0) <= stddev && dev_j.at<double>(0) <= stddev && dev_ij.at<double>(0) <= stddev)
+                //std::cout << area_i.clone().reshape(0, 1).size() << std::endl;
+                //std::cout << area_j.clone().reshape(0, 1).size() << std::endl;
+                if (!area_i.empty() && !area_j.empty())
                 {
-                    if (abs(mean_i.at<double>(0) - mean_j.at<double>(0)) <= 10)
+                    cv::hconcat(area_i.clone().reshape(0, 1), area_j.clone().reshape(0, 1), area_ij);
+
+                    cv::meanStdDev(area_i, mean_i, dev_i);
+                    cv::meanStdDev(area_j, mean_j, dev_j);
+                    cv::meanStdDev(area_ij, mean_ij, dev_ij);
+
+                    if (dev_i.at<double>(0) <= stddev && dev_j.at<double>(0) <= stddev && dev_ij.at<double>(0) <= stddev)
                     {
-                        set_to_by_index(image, idx_i, mean_ij);
-                        set_to_by_index(image, idx_j, mean_ij);
+                        if (abs(mean_i.at<double>(0) - mean_j.at<double>(0)) <= 10)
+                        {
+                            set_to_by_index(image, idx_i, mean_ij);
+                            set_to_by_index(image, idx_j, mean_ij);
+                        }
                     }
                 }
 
