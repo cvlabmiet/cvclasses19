@@ -58,7 +58,7 @@ void calculateDescriptor(const cv::Mat& image, int kernel_size, descriptor& desc
     {
         for (int i = 0; i < 3; i++)
         {
-            cv::Mat kernel = cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th[2], lm, gm);
+            cv::Mat kernel = cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th[i], lm, gm);
             cv::filter2D(image, response, CV_32F, kernel);
             cv::meanStdDev(response, mean, dev);
             descr.emplace_back(mean.at<double>(0));
