@@ -12,7 +12,7 @@
 namespace
 {
 std::vector<int> gIndeces;
-void area_by_index(int index, cv::Mat image, cv::Mat roi)
+void area_by_index(int index, cv::Mat &image, cv::Mat &roi)
 {
     const auto width = image.cols;
     const auto height = image.rows;
@@ -42,8 +42,10 @@ void area_by_index(int index, cv::Mat image, cv::Mat roi)
         step_w /= 2;
         step_h /= 2;
     }
+    //std::cout << "coords " << x << " " << y << std::endl;
+    //std::cout << "size " << w << " " << h << std::endl;
 
-    roi = image(cv::Range(y, y + h), cv::Range(x, x + w));
+    roi = image(cv::Range(y, y + h), cv::Range(x, x + w)).clone();
 }
 
 bool neighbour_indeces(int index1, int index2)
@@ -148,12 +150,12 @@ void split_image(cv::Mat image, double stddev, int current_index)
 
     if (image.empty())
         return; 
-
+    
     cv::Mat mean;
     cv::Mat dev;
     cv::meanStdDev(image, mean, dev);
 
-    if (dev.at<double>(0) <= stddev)
+    if (dev.at<double>(0) <= stddev || width < 12 || height < 12)
     {
         image.setTo(mean);
         gIndeces.push_back(current_index);
@@ -303,35 +305,35 @@ void merge_image(cv::Mat image, double stddev)
                 area_by_index(idx_i, image, area_i);
                 area_by_index(idx_j, image, area_j);
 
-                std::cout << area_i.isContinuous() << std::endl;
-                std::cout << area_i.clone().isContinuous() << std::endl;
+                //std::cout << area_i.isContinuous() << std::endl;
+                //std::cout << area_i.clone().isContinuous() << std::endl;
                 cv::Mat a = area_i.clone();
-                std::cout << a.isContinuous() << std::endl;
-                std::cout << a.clone().isContinuous() << std::endl;
+                //std::cout << a.isContinuous() << std::endl;
+                //std::cout << a.clone().isContinuous() << std::endl;
                 cv::Mat b;
-                std::cout << area_i.cols << " x " << area_i.rows << std::endl;
+                //std::cout << area_i.cols << " x " << area_i.rows << std::endl;
                 //cv::resize(area_i, b, cv::Size(area_i.size[1], area_i.size[2]));
                 //std::cout << b.clone().isContinuous() << std::endl;
 
                 //std::cout << area_i.clone().reshape(0, 1).size() << std::endl;
                 //std::cout << area_j.clone().reshape(0, 1).size() << std::endl;
-                if (!area_i.empty() && !area_j.empty())
+                //if (!area_i.empty() && !area_j.empty())
+                //{
+                cv::hconcat(area_i.clone().reshape(0, 1), area_j.clone().reshape(0, 1), area_ij);
+
+                cv::meanStdDev(area_i, mean_i, dev_i);
+                cv::meanStdDev(area_j, mean_j, dev_j);
+                cv::meanStdDev(area_ij, mean_ij, dev_ij);
+
+                if (dev_i.at<double>(0) <= stddev && dev_j.at<double>(0) <= stddev && dev_ij.at<double>(0) <= stddev)
                 {
-                    cv::hconcat(area_i.clone().reshape(0, 1), area_j.clone().reshape(0, 1), area_ij);
-
-                    cv::meanStdDev(area_i, mean_i, dev_i);
-                    cv::meanStdDev(area_j, mean_j, dev_j);
-                    cv::meanStdDev(area_ij, mean_ij, dev_ij);
-
-                    if (dev_i.at<double>(0) <= stddev && dev_j.at<double>(0) <= stddev && dev_ij.at<double>(0) <= stddev)
+                    if (abs(mean_i.at<double>(0) - mean_j.at<double>(0)) <= 10)
                     {
-                        if (abs(mean_i.at<double>(0) - mean_j.at<double>(0)) <= 10)
-                        {
-                            set_to_by_index(image, idx_i, mean_ij);
-                            set_to_by_index(image, idx_j, mean_ij);
-                        }
+                        set_to_by_index(image, idx_i, mean_ij);
+                        set_to_by_index(image, idx_j, mean_ij);
                     }
                 }
+                //}
 
             }
         }

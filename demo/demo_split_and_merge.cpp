@@ -20,10 +20,10 @@ int demo_split_and_merge(int argc, char* argv[])
     const auto origin_wnd = "origin";
     const auto demo_wnd = "demo";
 
-    int stddev = 50;
+    int stddev = 10;
     cv::namedWindow(demo_wnd, 1);
     // \todo choose reasonable max value
-    cv::createTrackbar("stdev", demo_wnd, &stddev, 255);
+    cv::createTrackbar("stdev", demo_wnd, &stddev, 50);
 
     while (cv::waitKey(30) != 27) // ESC
     {
@@ -34,6 +34,7 @@ int demo_split_and_merge(int argc, char* argv[])
         cv::Mat merged = cvlib::split_and_merge(frame_gray, stddev);
         if (!merged.empty())
             cv::imshow(demo_wnd, cvlib::split_and_merge(frame_gray, stddev));
+        std::cout << "frame is ready" << std::endl;
     }
 
     cv::destroyWindow(origin_wnd);
