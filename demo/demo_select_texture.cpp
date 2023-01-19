@@ -46,8 +46,7 @@ int demo_select_texture(int argc, char* argv[])
     int eps = 50;
     cv::namedWindow(data.wnd);
     cv::namedWindow(demo_wnd);
-    // \todo choose reasonable max value
-    cv::createTrackbar("eps", demo_wnd, &eps, 200);
+    cv::createTrackbar("eps", demo_wnd, &eps, 100);
 
     cv::setMouseCallback(data.wnd, mouse, &data);
 
