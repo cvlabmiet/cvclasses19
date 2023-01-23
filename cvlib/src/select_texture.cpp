@@ -39,21 +39,24 @@ void calculateDescriptor(const cv::Mat& image, int kernel_size, descriptor& desc
 {
     descr.clear();
     const double th[3] = {0, CV_PI / 4, CV_PI / 2};
-    const double lm = 10.0;
+    //const double lm = 10.0;
     const double gm = 0.75;
     cv::Mat response;
     cv::Mat mean;
     cv::Mat dev;
 
-    for (auto sig = 5; sig <= 15; sig += 5)
+    for (auto lm = 3; lm < 15; lm += 5)
     {
-        for (int i = 0; i < 3; i++)
+        for (auto sig = 5; sig <= 15; sig += 5)
         {
-            cv::Mat kernel = cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th[i], lm, gm);
-            cv::filter2D(image, response, CV_32F, kernel);
-            cv::meanStdDev(response, mean, dev);
-            descr.emplace_back(mean.at<double>(0));
-            descr.emplace_back(dev.at<double>(0));
+            for (int i = 0; i < 3; i++)
+            {
+                cv::Mat kernel = cv::getGaborKernel(cv::Size(kernel_size, kernel_size), sig, th[i], lm, gm);
+                cv::filter2D(image, response, CV_32F, kernel);
+                cv::meanStdDev(response, mean, dev);
+                descr.emplace_back(mean.at<double>(0));
+                descr.emplace_back(dev.at<double>(0));
+            }
         }
     }
 }
