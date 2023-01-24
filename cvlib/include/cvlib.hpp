@@ -1,9 +1,3 @@
-/* Computer Vision Functions.
- * @file
- * @date 2018-09-05
- * @author Anonymous
- */
-
 #ifndef __CVLIB_HPP__
 #define __CVLIB_HPP__
 
@@ -31,6 +25,26 @@ class motion_segmentation : public cv::BackgroundSubtractor
     /// \brief ctor
     motion_segmentation();
 
+    cv::Mat getMin() const
+    {
+        return mMin;
+    }
+
+    cv::Mat getMax() const
+    {
+        return mMax;
+    }
+
+    cv::Mat getDiff() const
+    {
+        return mDiff;
+    }
+
+    void setVarThreshold(const int& threshold)
+    {
+        mThreshold = threshold;
+    }
+
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = -1) override;
 
@@ -42,6 +56,13 @@ class motion_segmentation : public cv::BackgroundSubtractor
 
     private:
     cv::Mat bg_model_;
+    double mMu;
+    int mCounter;
+    int mThreshold;
+    cv::Mat mMax;
+    cv::Mat mMin;
+    cv::Mat mDiff;
+    cv::Mat mPrevFrame;
 };
 
 /// \brief FAST corner detection algorithm
@@ -66,6 +87,8 @@ class corner_detector_fast : public cv::Feature2D
     {
         return "FAST_Binary";
     }
+
+    bool check_count_same_in_a_row(int* arr, int thresh);
 };
 
 /// \brief Descriptor matched based on ratio of SSD
