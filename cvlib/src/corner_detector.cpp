@@ -25,7 +25,7 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
     for (int i = 3; i < image.rows() - 3; i++)
         for (int j = 3; j < image.cols() - 3; j++)
         {
-            int ñompare_arr[17] = {0};
+            int compare_arr[17] = {0};
             cv::Point pix_pos = cv::Point(j, i);
             int Ip = img_mat.at<uint8_t>(pix_pos);
             int count_l = 0, count_d = 0;
@@ -34,16 +34,16 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
                 int Ipi = img_mat.at<uint8_t>(pix_pos + fast_offsets[k]);
                 if (Ipi > Ip + t)
                 {
-                    ñompare_arr[k] = 1;
+                    compare_arr[k] = 1;
                     count_l++;
                 }
                 else if (Ipi < Ip - t)
                 {
-                    ñompare_arr[k] = -1;
+                    compare_arr[k] = -1;
                     count_d++;
                 }
                 else
-                    ñompare_arr[k] = 0;
+                    compare_arr[k] = 0;
             }
             if ((count_l >= 3) || (count_d >= 3))
             {
@@ -53,13 +53,13 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
                         continue;
                     int Ipi = img_mat.at<uint8_t>(pix_pos + fast_offsets[k]);
                     if (Ipi > Ip + t)
-                        ñompare_arr[k] = 1;
+                        compare_arr[k] = 1;
                     else if (Ipi < Ip - t)
-                        ñompare_arr[k] = -1;
+                        compare_arr[k] = -1;
                     else
-                        ñompare_arr[k] = 0;
+                        compare_arr[k] = 0;
                 }
-                if (check_count_same_in_a_row(�ompare_arr + 1, 12))
+                if (check_count_same_in_a_row(compare_arr + 1, 12))
                     keypoints.push_back(cv::KeyPoint(pix_pos, 4));
             }
         }
