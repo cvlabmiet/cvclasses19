@@ -87,6 +87,8 @@ class corner_detector_fast : public cv::Feature2D
     {
         return "FAST_Binary";
     }
+
+    bool check_count_same_in_a_row(int* arr, int thresh);
 };
 
 /// \brief Descriptor matched based on ratio of SSD
