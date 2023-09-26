@@ -1,7 +1,7 @@
 /* Demo application for Computer Vision Library.
  * @file
- * @date 2018-09-05
- * @author Anonymous
+ * @date 2023-14-11
+ * @author Yaroslav Murenkov
  */
 
 #include <opencv2/opencv.hpp>
@@ -10,7 +10,7 @@
 
 int demo_split_and_merge(int argc, char* argv[])
 {
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(0, 200);
     if (!cap.isOpened())
         return -1;
 
@@ -20,12 +20,12 @@ int demo_split_and_merge(int argc, char* argv[])
     const auto origin_wnd = "origin";
     const auto demo_wnd = "demo";
 
-    int stddev = 50;
+    int stddev = 25;
     cv::namedWindow(demo_wnd, 1);
-    // \todo choose reasonable max value
-    cv::createTrackbar("stdev", demo_wnd, &stddev, 255);
+    cv::createTrackbar("stdev", demo_wnd, &stddev, 50);
 
-    while (cv::waitKey(30) != 27) // ESC
+    const auto ESC_KEY_CODE = 27;
+    while (cv::waitKey(30) != ESC_KEY_CODE)
     {
         cap >> frame;
 
