@@ -10,7 +10,7 @@
 
 int demo_split_and_merge(int argc, char* argv[])
 {
-    cv::VideoCapture cap(0);
+    cv::VideoCapture cap(0, 200);
     if (!cap.isOpened())
         return -1;
 
@@ -20,10 +20,10 @@ int demo_split_and_merge(int argc, char* argv[])
     const auto origin_wnd = "origin";
     const auto demo_wnd = "demo";
 
-    int stddev = 50;
+    int stddev = 20;
     cv::namedWindow(demo_wnd, 1);
     // \todo choose reasonable max value
-    cv::createTrackbar("stdev", demo_wnd, &stddev, 255);
+    cv::createTrackbar("stdev", demo_wnd, &stddev, 50);
 
     while (cv::waitKey(30) != 27) // ESC
     {
