@@ -1,7 +1,7 @@
 /* Demo application for Computer Vision Library.
  * @file
- * @date 2018-09-05
- * @author Anonymous
+ * @date 2023-10-25
+ * @author Yaroslav Murenkov
  */
 
 #include <opencv2/opencv.hpp>
@@ -46,13 +46,13 @@ int demo_select_texture(int argc, char* argv[])
     int eps = 50;
     cv::namedWindow(data.wnd);
     cv::namedWindow(demo_wnd);
-    // \todo choose reasonable max value
-    cv::createTrackbar("eps", demo_wnd, &eps, 200);
+    cv::createTrackbar("eps", demo_wnd, &eps, 150);
 
     cv::setMouseCallback(data.wnd, mouse, &data);
 
     cv::Mat frame_gray;
-    while (cv::waitKey(30) != 27) // ESC
+    const auto ESC_KEY_CODE = 27;
+    while (cv::waitKey(30) != ESC_KEY_CODE)
     {
         cap >> data.image;
 
