@@ -66,6 +66,9 @@ class corner_detector_fast : public cv::Feature2D
     {
         return "FAST_Binary";
     }
+
+    private:
+    std::vector<std::pair<cv::Point, cv::Point>> pairs;
 };
 
 /// \brief Descriptor matched based on ratio of SSD
