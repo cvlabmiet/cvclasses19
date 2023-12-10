@@ -1,12 +1,14 @@
 /* FAST corner detector algorithm implementation.
  * @file
- * @date 2018-10-16
- * @author Anonymous
+ * @date 2023-12-10
+ * @author Yaroslav Murenkov
  */
 
 #include "cvlib.hpp"
 
 #include <ctime>
+#include <random>
+#include <vector>
 
 namespace cvlib
 {
@@ -20,9 +22,8 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
 {
     keypoints.clear();
 
-    const auto img_ = image.getMat();
     cv::Mat img;
-    img_.copyTo(img);
+    image.getMat().copyTo(img);
     if (img.channels() == 3)
         cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
 
@@ -72,21 +73,49 @@ void corner_detector_fast::detect(cv::InputArray image, CV_OUT std::vector<cv::K
     }
 }
 
-void corner_detector_fast::compute(cv::InputArray, std::vector<cv::KeyPoint>& keypoints, cv::OutputArray descriptors)
+void corner_detector_fast::compute(cv::InputArray image, std::vector<cv::KeyPoint>& keypoints, cv::OutputArray descriptors)
 {
-    std::srand(unsigned(std::time(0))); // \todo remove me
-                                        // \todo implement any binary descriptor
-    const int desc_length = 2;
-    descriptors.create(static_cast<int>(keypoints.size()), desc_length, CV_32S);
+    cv::Mat img;
+    image.getMat().copyTo(img);
+    if (img.channels() == 3)
+        cv::cvtColor(img, img, cv::COLOR_BGR2GRAY);
+    cv::GaussianBlur(img, img, cv::Size(5, 5), 2, 2);
+
+    const auto neighbourhood_size = 25;
+    const auto neighbourhood_halfsize = neighbourhood_size / 2 + 1;
+
+    const auto desc_length = 32;
+    descriptors.create(static_cast<int>(keypoints.size()), desc_length, CV_8U);
     auto desc_mat = descriptors.getMat();
     desc_mat.setTo(0);
 
-    int* ptr = reinterpret_cast<int*>(desc_mat.ptr());
-    for (const auto& pt : keypoints)
+    auto random_pairs = [](auto size, auto desc_length) {
+        const auto halfsize = size / 2;
+        std::default_random_engine randgen;
+        std::normal_distribution<double> norm(0, size / 2);
+
+        auto randint = [&randgen, &norm](auto left, auto right) { return std::clamp(static_cast<int>(std::round(norm(randgen))), left, right); };
+
+        std::vector<std::pair<cv::Point, cv::Point>> pairs;
+        for (int i = 0; i < desc_length; i++)
+            pairs.push_back(std::make_pair(cv::Point(randint(-halfsize, halfsize), randint(-halfsize, halfsize)),
+                                           cv::Point(randint(-halfsize, halfsize), randint(-halfsize, halfsize))));
+
+        return pairs;
+    };
+    auto test = [&img](cv::Point kp, std::pair<cv::Point, cv::Point> p) { return img.at<uint8_t>(kp + p.first) < img.at<uint8_t>(kp + p.second); };
+
+    auto ptr = reinterpret_cast<uint8_t*>(desc_mat.ptr());
+    for (const auto& kp : keypoints)
     {
         for (int i = 0; i < desc_length; ++i)
         {
-            *ptr = std::rand();
+            uint8_t descriptor = 0;
+            if (this->pairs.empty())
+                this->pairs = random_pairs(neighbourhood_size, desc_length);
+            for (auto j = 0; j < pairs.size(); ++j)
+                descriptor |= (test(kp.pt, pairs.at(j)) << (pairs.size() - 1 - j));
+            *ptr = descriptor;
             ++ptr;
         }
     }

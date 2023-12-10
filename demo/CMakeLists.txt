@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 
 project(cvlib_demo VERSION 0.1.0 LANGUAGES CXX DESCRIPTION "Computer Vision Algorithms Demo Application")
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 find_package(OpenCV 4.1.1 REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
