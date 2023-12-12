@@ -21,8 +21,10 @@ int demo_feature_matching(int argc, char* argv[])
     cv::namedWindow(main_wnd);
     cv::namedWindow(demo_wnd);
 
-    auto detector = cv::AKAZE::create(); // \todo use your detector from cvlib
-    auto matcher = cvlib::descriptor_matcher(1.2f); //\todo add trackbar to demo_wnd to tune ratio value
+    auto ratio = 25;
+
+    auto detector = cvlib::corner_detector_fast::create();
+    auto matcher = cvlib::descriptor_matcher(ratio); //\todo add trackbar to demo_wnd to tune ratio value
 
     /// \brief helper struct for tidy code
     struct img_features
@@ -38,30 +40,32 @@ int demo_feature_matching(int argc, char* argv[])
 
     cv::Mat main_frame;
     cv::Mat demo_frame;
+    cv::createTrackbar("ratio", demo_wnd, &ratio, 255);
     utils::fps_counter fps;
     int pressed_key = 0;
-    while (pressed_key != 27) // ESC
+    const auto ESC_KEY_CODE = 27;
+    const auto SPACE_KEY_CODE = 32;
+    while (pressed_key != ESC_KEY_CODE)
     {
         cap >> test.img;
 
+        cv::blur(test.img, test.img, cv::Size(9, 9));
         detector->detect(test.img, test.corners);
         cv::drawKeypoints(test.img, test.corners, main_frame);
         cv::imshow(main_wnd, main_frame);
 
         pressed_key = cv::waitKey(30);
-        if (pressed_key == ' ') // space
+        if (pressed_key == SPACE_KEY_CODE) // space
         {
             ref.img = test.img.clone();
             detector->detectAndCompute(ref.img, cv::Mat(), ref.corners, ref.descriptors);
         }
 
         if (ref.corners.empty())
-        {
             continue;
-        }
 
         detector->compute(test.img, test.corners, test.descriptors);
-        //\todo add trackbar to demo_wnd to tune threshold value
+        matcher.set_ratio(ratio);
         matcher.radiusMatch(test.descriptors, ref.descriptors, pairs, 100.0f);
         cv::drawMatches(test.img, test.corners, ref.img, ref.corners, pairs, demo_frame);
 
