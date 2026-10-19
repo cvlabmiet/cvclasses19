@@ -29,7 +29,8 @@ class motion_segmentation : public cv::BackgroundSubtractor
 {
     public:
     /// \brief ctor
-    motion_segmentation();
+    /// \param alpha - вес новой информации в скользящем среднем (маленький, 0.005..0.02)
+    motion_segmentation(double alpha = 0.01) : alpha_(alpha) {}
 
     /// \see cv::BackgroundSubtractor::apply
     void apply(cv::InputArray image, cv::OutputArray fgmask, double learningRate = -1) override;
@@ -40,8 +41,13 @@ class motion_segmentation : public cv::BackgroundSubtractor
         backgroundImage.assign(bg_model_);
     }
 
+    /// \brief порог на среднее абсолютное отклонение по каналам (0..255)
+    void setDiffThreshold(double t) { diff_threshold_ = t; }
+
     private:
-    cv::Mat bg_model_;
+    double  alpha_          = 0.01;
+    double  diff_threshold_ = 25.0;
+    cv::Mat bg_model_;   // CV_32FC3 — скользящее среднее
 };
 
 /// \brief FAST corner detection algorithm
