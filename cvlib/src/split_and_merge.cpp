@@ -22,11 +22,40 @@ void split_image(cv::Mat image, double stddev)
 
     const auto width = image.cols;
     const auto height = image.rows;
+    if (width <= 1 || height <= 1)
+    {
+        image.setTo(mean);
+        return;
+    }
 
     split_image(image(cv::Range(0, height / 2), cv::Range(0, width / 2)), stddev);
     split_image(image(cv::Range(0, height / 2), cv::Range(width / 2, width)), stddev);
     split_image(image(cv::Range(height / 2, height), cv::Range(width / 2, width)), stddev);
     split_image(image(cv::Range(height / 2, height), cv::Range(0, width / 2)), stddev);
+}
+
+void merge_image(cv::Mat image, double stddev)
+{
+    const auto width = image.cols;
+    const auto height = image.rows;
+
+    if (width <= 1 || height <= 1)
+        return;
+
+    cv::Mat mean;
+    cv::Mat dev;
+    cv::meanStdDev(image, mean, dev);
+
+    if (dev.at<double>(0) <= stddev)
+    {
+        image.setTo(mean);
+        return;
+    }
+
+    merge_image(image(cv::Range(0, height / 2), cv::Range(0, width / 2)), stddev);
+    merge_image(image(cv::Range(0, height / 2), cv::Range(width / 2, width)), stddev);
+    merge_image(image(cv::Range(height / 2, height), cv::Range(width / 2, width)), stddev);
+    merge_image(image(cv::Range(height / 2, height), cv::Range(0, width / 2)), stddev);
 }
 } // namespace
 
@@ -39,7 +68,7 @@ cv::Mat split_and_merge(const cv::Mat& image, double stddev)
     split_image(res, stddev);
 
     // merge part
-    // \todo implement merge algorithm
+    merge_image(res, stddev);
     return res;
 }
 } // namespace cvlib
